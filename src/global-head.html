@@ -92,19 +92,28 @@ loadScript("https://static.deriv.com/scripts/cookie.js", function() {
     }
     // Define your cookie storage and manipulation functions
     function setupCookies() {
-        var deriv_cookie_domain = 'deriv.com'; // Modify as per your actual usage
-        var CookieStorage = function(cookie_name, cookie_domain = '') {
-            var hostname = window.location.hostname;
-            var is_deriv_com = hostname.includes('deriv.com');
-            this.initialized = false;
-            this.cookie_name = cookie_name;
-            this.domain = is_deriv_com ? deriv_cookie_domain : cookie_domain || hostname;
-            this.path = '/';
-            this.same_site = 'None';
-            this.is_secure = true;
-            this.expires = new Date('Thu, 1 Jan 2037 12:00:00 GMT');
-            this.value = {};
-        };
+       var allowedHosts = ['deriv.com', 'binary.sx']; // List of allowed domains
+       var CookieStorage = function(cookie_name, cookie_domain = '') {
+           var hostname = window.location.hostname;
+           var parsedHostname = hostname.split('.').slice(-2).join('.'); // Get the main domain part
+           var isAllowedParsedHostname = allowedHosts.includes(parsedHostname); // Check if the parsed hostname is in the list of allowed hosts
+           var isAllowedCookieDomain = cookie_domain && allowedHosts.includes(cookie_domain); // Validate the provided cookie_domain
+           this.initialized = false;
+           this.cookie_name = cookie_name;
+           // Determine the domain based on the above checks
+           if (isAllowedParsedHostname) {
+               this.domain = parsedHostname;
+           } else if (isAllowedCookieDomain) {
+               this.domain = cookie_domain;
+           } else {
+               this.domain = allowedHosts[0]; // Default to the first known safe domain if no valid domain is provided or parsed
+           }
+           this.path = '/';
+           this.same_site = 'None';
+           this.is_secure = true; // Secure flag must be true if same_site is 'None'
+           this.expires = new Date('Thu, 1 Jan 2037 12:00:00 GMT');
+           this.value = {};
+       };
         CookieStorage.prototype = {
             initialize: function() {
                 var cookie_value = Cookies.get(this.cookie_name);
