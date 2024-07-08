@@ -47,7 +47,7 @@ jobs:
                   \"$SITE_TO_DEPLOY\"
                 ]
               }")
-        if [ $RESPONSE -ne 200 ]; then
+        if [ $RESPONSE -ne 202 ]; then
           echo "Webflow Publish failed with status $RESPONSE"
           cat response.txt
           exit 1
