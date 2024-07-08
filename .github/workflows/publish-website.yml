@@ -37,13 +37,20 @@ jobs:
         SITE_TO_DEPLOY: ${{ steps.map-site-id.outputs.site_to_deploy }}
         SITE_ID: "65cf252c355bb0ab87269e04"
       run: |
-        curl -X POST "https://api.webflow.com/v2/sites/$SITE_ID/publish" \
-        -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
-        -H "Accept: application/json" \
-        -H "Content-Type: application/json" \
-        -d "{
-              \"publishToWebflowSubdomain\": false,
-              \"customDomains\": [
-                \"$SITE_TO_DEPLOY\"
-              ]
-            }"
+        RESPONSE=$(curl -s -o response.txt -w "%{http_code}" -X POST "https://api.webflow.com/v2/sites/$SITE_ID/publish" \
+          -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+          -H "Accept: application/json" \
+          -H "Content-Type: application/json" \
+          -d "{
+                \"publishToWebflowSubdomain\": false,
+                \"customDomains\": [
+                  \"$SITE_TO_DEPLOY\"
+                ]
+              }")
+        if [ $RESPONSE -ne 200 ]; then
+          echo "Webflow Publish failed with status $RESPONSE"
+          cat response.txt
+          exit 1
+        else
+          echo "Webflow Publish succeeded"
+        fi
