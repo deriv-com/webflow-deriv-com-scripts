@@ -25,8 +25,8 @@ jobs:
       run: |
         echo "Mapping site label to site ID"
         case "${{ github.event.inputs.site_label }}" in
-          "webflow-copy.deriv.com") SITE_ID="65cf252c355bb0ab87269e04" ;;
-          "pretend-site.webflow.io") SITE_ID="I_HAVE_NO_SITE_ID" ;;
+          "webflow-copy.deriv.com") SITE_TO_DEPLOY="65fad28eed7a6248275d2fe7" ;;
+          "pretend-site.webflow.io") SITE_TO_DEPLOY="I_HAVE_NO_SITE_ID" ;;
           *) echo "Invalid site label"; exit 1 ;;
         esac
         echo "::set-output name=site_id::$SITE_ID"
@@ -34,7 +34,7 @@ jobs:
     - name: Trigger Webflow Publish
       env:
         WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
-        SITE_TO_DEPLOY: ${{ steps.map-site-id.outputs.site_id }}
+        SITE_TO_DEPLOY: ${{ steps.map-site-id.outputs.site_to_deploy }}
         SITE_ID: "65cf252c355bb0ab87269e04"
       run: |
         curl -X POST "https://api.webflow.com/v2/sites/$SITE_ID/publish" \
