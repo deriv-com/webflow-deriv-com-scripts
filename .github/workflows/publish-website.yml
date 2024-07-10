@@ -4,39 +4,87 @@ run-name: Runs the site publish action for ${{ github.event.inputs.environment }
 on:
   workflow_dispatch:
     inputs:
-      site_id:
-        description: 'Insert Site ID'
-        default: '65cf252c355bb0ab87269e04'
-        required: true
-        type: string
-      domain:
+      environment:
         type: choice
-        description:  Select which domain to publish
+        description: 'Select the environment to publish to'
         options:
-        - 65fad28eed7a6248275d2fe7
-        - some-other-domain.webflow.io
+          - staging
+          - production
+        required: true
+      site_label:
+        type: choice
+        description: 'Select which site to publish (only for production)'
+        options:
+          - deriv.com
+          - deriv.be
+          - deriv.me
+        required: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Trigger Webflow Publish
-      env:
-        WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
-        SITE_TO_DEPLOY: ${{ github.event.inputs.domain }}
-        SITE_ID: ${{ github.event.inputs.site_id }}
-      run: |
-        curl -X POST "https://api.webflow.com/v2/sites/$SITE_ID/publish" \
-        -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
-        -H "Accept: application/json" \
-        -H "Content-Type: application/json" \
-        -d "{
-              \"publishToWebflowSubdomain\": false,
-              \"customDomains\": [
-                \"$SITE_TO_DEPLOY\"
-              ]
-            }"
+      - name: Map environment and site label to site ID and domain
+        id: map-site
+        run: |
+          echo "Mapping environment and site label to site ID and domain"
+          SITE_ID="65cf252c355bb0ab87269e04"
+          if [ "${{ github.event.inputs.environment }}" == "staging" ]; then
+            case "webflow-copy.deriv.com" in
+              "webflow-copy.deriv.com") SITE_TO_DEPLOY="65fad28eed7a6248275d2fe7" DOMAIN="webflow-copy.deriv.com" ;;
+              *) echo "Invalid site label"; exit 1 ;;
+            esac
+          else
+            case "${{ github.event.inputs.site_label }}" in
+              "deriv.com") SITE_TO_DEPLOY="???" DOMAIN="deriv.com" ;;
+              "deriv.be") SITE_TO_DEPLOY="???" DOMAIN="deriv.be" ;;
+              "deriv.me") SITE_TO_DEPLOY="???" DOMAIN="deriv.me" ;;
+              *) echo "Invalid site label"; exit 1 ;;
+            esac
+          fi
+          echo "site_to_deploy=$SITE_TO_DEPLOY" >> $GITHUB_OUTPUT
+          echo "site_id=$SITE_ID" >> $GITHUB_OUTPUT
+          echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+
+      - name: Trigger Webflow Publish
+        env:
+          WEBFLOW_API_TOKEN: ${{ secrets.WEBFLOW_API_TOKEN }}
+          SITE_TO_DEPLOY: ${{ steps.map-site.outputs.site_to_deploy }}
+          SITE_ID: ${{ steps.map-site.outputs.site_id }}
+          DOMAIN: ${{ steps.map-site.outputs.domain }}
+        run: |
+          RESPONSE=$(curl -s -o response.txt -w "%{http_code}" -X POST "https://api.webflow.com/v2/sites/$SITE_ID/publish" \
+            -H "Authorization: Bearer $WEBFLOW_API_TOKEN" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            -d "{
+                  \"publishToWebflowSubdomain\": false,
+                  \"customDomains\": [
+                    \"$DOMAIN\"
+                  ]
+                }")
+          if [ $RESPONSE -ne 202 ]; then
+            echo "Webflow Publish failed with status $RESPONSE"
+            cat response.txt
+            exit 1
+          else
+            echo "Webflow Publish succeeded"
+          fi
+
+      - name: Notify Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ $RESPONSE -ne 202 ]; then
+            STATUS="failed"
+          else
+            STATUS="succeeded"
+          fi
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"Webflow publish to ${{ github.event.inputs.environment }} (${DOMAIN}) ${STATUS}.\"
+          }" $SLACK_WEBHOOK_URL
