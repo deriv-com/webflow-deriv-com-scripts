@@ -33,6 +33,8 @@ jobs:
       COM_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_com }}
       ME_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_me }}
       BE_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_be }}
+      STAGING_COM_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_staging_webflow }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,6 +46,7 @@ jobs:
           echo "site_label_deriv_com=${{ github.event.inputs.site_label_deriv_com }}" >> $GITHUB_OUTPUT
           echo "site_label_deriv_me=${{ github.event.inputs.site_label_deriv_me }}" >> $GITHUB_OUTPUT
           echo "site_label_deriv_be=${{ github.event.inputs.site_label_deriv_be }}" >> $GITHUB_OUTPUT
+          echo "site_label_staging_webflow=${{ github.event.inputs.site_label_staging_webflow }}" >> $GITHUB_OUTPUT
 
       - name: Map site labels to site IDs and deploy
         id: map-site-ids
