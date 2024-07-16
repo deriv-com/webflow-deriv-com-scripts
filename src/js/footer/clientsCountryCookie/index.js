@@ -28,19 +28,3 @@ async function fetchCountryAndPopulateFooter() {
 }
 
 fetchCountryAndPopulateFooter();
-window
-  .socketMessageSend(message, messageType)
-  .then((response) => {
-    const clientsCountryFromCookie = getCookieByKey(
-        document.cookie,
-        "clients_country"
-      );
-    if (clientsCountryFromCookie !== response.website_status.clients_country) {
-      deleteCookie("clients_country");
-      setCookie("clients_country", response.website_status.clients_country, 30);
-    }
-    populateFooterComponent();
-  })
-  .catch((error) => {
-    console.error("Error received:", error);
-  });
