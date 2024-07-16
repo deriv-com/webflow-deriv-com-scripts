@@ -9,7 +9,6 @@ on:
 
 jobs:
   update-sitemap-and-robots:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.outputs.COM_DOMAIN_PUBLISHED == 'true' || github.event.workflow_run.outputs.ME_DOMAIN_PUBLISHED == 'true' || github.event.workflow_run.outputs.BE_DOMAIN_PUBLISHED == 'true' || github.event.workflow_run.outputs.STAGING_COM_DOMAIN_PUBLISHED == 'true') }}
     runs-on: ubuntu-latest
     env:
       BASE_DOMAIN: https://staging-webflow.deriv.com
@@ -32,6 +31,10 @@ jobs:
         env:
           MAIN_DOMAIN: "https://deriv.com"
         run: |
+          echo ${{ github.event.workflow_run.outputs.STAGING_COM_DOMAIN_PUBLISHED }} 
+          echo ${{ github.event.workflow_run.outputs.COM_DOMAIN_PUBLISHED }}
+          echo ${{ github.event.workflow_run.outputs.ME_DOMAIN_PUBLISHED }}
+          echo ${{ github.event.workflow_run.outputs.BE_DOMAIN_PUBLISHED }}
           mkdir content
           domain_name=$(echo $MAIN_DOMAIN | sed 's|https://||g')
           mkdir -p content/$domain_name
@@ -55,7 +58,7 @@ jobs:
     name: Send Release Slack notification success
 
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.outputs.COM_DOMAIN_PUBLISHED == 'true' || github.event.workflow_run.outputs.ME_DOMAIN_PUBLISHED == 'true' || github.event.workflow_run.outputs.BE_DOMAIN_PUBLISHED == 'true') }}
+    if: ${{ github.event.workflow_run.conclusion == 'success'}}
     needs: [update-sitemap-and-robots]
     steps:
       - name: Determine Slack Message
