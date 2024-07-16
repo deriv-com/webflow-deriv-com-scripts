@@ -1,11 +1,28 @@
 name: Create Sitemap.xml and robots.txt for all the domains and Upload to R2
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["Publish Site"]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      site_label_staging_webflow:
+        type: boolean
+        description: "staging-webflow.deriv.com"
+        default: false
+      site_label_webflow:
+        type: boolean
+        description: "webflow.deriv.com"
+        default: false
+      site_label_deriv_com:
+        type: boolean
+        description: "deriv.com"
+        default: false
+      site_label_deriv_me:
+        type: boolean
+        description: "deriv.me"
+        default: false
+      site_label_deriv_be:
+        type: boolean
+        description: "deriv.be"
+        default: false
 
 jobs:
   update-sitemap-and-robots:
@@ -31,10 +48,11 @@ jobs:
         env:
           MAIN_DOMAIN: "https://deriv.com"
         run: |
-          echo ${{ github.event.workflow_run.outputs.STAGING_COM_DOMAIN_PUBLISHED }} 
-          echo ${{ github.event.workflow_run.outputs.COM_DOMAIN_PUBLISHED }}
-          echo ${{ github.event.workflow_run.outputs.ME_DOMAIN_PUBLISHED }}
-          echo ${{ github.event.workflow_run.outputs.BE_DOMAIN_PUBLISHED }}
+          echo "value of site_label_staging_webflow: " ${{ github.event.inputs.site_label_staging_webflow }}
+          echo "value of site_label_webflow: " ${{ github.event.inputs.site_label_webflow }}
+          echo "value of site_label_deriv_com: " ${{ github.event.inputs.site_label_deriv_com }}
+          echo "value of site_label_deriv_me: " ${{ github.event.inputs.site_label_deriv_me }}
+          echo "value of site_label_deriv_be: " ${{ github.event.inputs.site_label_deriv_be }}
           mkdir content
           domain_name=$(echo $MAIN_DOMAIN | sed 's|https://||g')
           mkdir -p content/$domain_name

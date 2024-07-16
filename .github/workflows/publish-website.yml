@@ -2,7 +2,7 @@ name: Publish Site
 run-name: Runs the site publish action for multiple domains
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       site_label_staging_webflow:
         type: boolean
@@ -30,23 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       SITES_ARRAY: ${{ steps.map-site-ids.outputs.SITES_ARRAY }}
-      COM_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_com }}
-      ME_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_me }}
-      BE_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_deriv_be }}
-      STAGING_COM_DOMAIN_PUBLISHED: ${{ steps.set_outputs.outputs.site_label_staging_webflow }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install jq
         run: sudo apt-get install -y jq
-      - name: Set Outputs
-        id: set_outputs
-        run: |
-          echo "site_label_deriv_com=${{ github.event.inputs.site_label_deriv_com }}" >> $GITHUB_OUTPUT
-          echo "site_label_deriv_me=${{ github.event.inputs.site_label_deriv_me }}" >> $GITHUB_OUTPUT
-          echo "site_label_deriv_be=${{ github.event.inputs.site_label_deriv_be }}" >> $GITHUB_OUTPUT
-          echo "site_label_staging_webflow=${{ github.event.inputs.site_label_staging_webflow }}" >> $GITHUB_OUTPUT
 
       - name: Map site labels to site IDs and deploy
         id: map-site-ids
@@ -101,6 +90,30 @@ jobs:
               echo "Webflow Publish to $site succeeded"
             fi
   send_slack_success:
+    name: Send Release Slack notification success
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [publish]
+    steps:
+      - name: Determine Slack Message
+        id: slack_message
+        env:
+          SITES_ARRAY: ${{ needs.publish.outputs.SITES_ARRAY }}
+        run: |
+          DATE=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "Determined SITES_ARRAY: $SITES_ARRAY"
+          if [ "${{ needs.publish.result }}" == "success" ]; then
+            echo "MESSAGE=Release succeeded for $SITES_ARRAY at $DATE" >> $GITHUB_ENV
+          else
+            echo "MESSAGE=Release failed for $SITES_ARRAY at $DATE" >> $GITHUB_ENV
+          fi
+      - name: Send Slack Notification
+        uses: "deriv-com/shared-actions/.github/actions/send_slack_notification@master"
+        with:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MESSAGE: ${{ env.MESSAGE }}
+
+  dispatch_sitemap_generator:
     name: Send Release Slack notification success
     runs-on: ubuntu-latest
     if: always()
