@@ -1,9 +1,6 @@
 import { setCookie, getCookieByKey, deleteCookie } from "../cookies";
 import populateFooterComponent from "../footerComponent";
 
-const message = JSON.stringify({ website_status: 1 });
-const messageType = "website_status";
-
 async function fetchCountryAndPopulateFooter() {
   try {
     const response = await fetch("https://www.cloudflare.com/cdn-cgi/trace");
