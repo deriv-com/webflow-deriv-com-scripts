@@ -1,0 +1,51 @@
+name: Publish Website and generate sitemap and robots
+
+on:
+  workflow_dispatch:
+    inputs:
+      site_label_staging_webflow:
+        type: boolean
+        description: "staging-webflow.deriv.com"
+        default: false
+      site_label_webflow:
+        type: boolean
+        description: "webflow.deriv.com"
+        default: false
+      site_label_deriv_com:
+        type: boolean
+        description: "deriv.com"
+        default: false
+      site_label_deriv_me:
+        type: boolean
+        description: "deriv.me"
+        default: false
+      site_label_deriv_be:
+        type: boolean
+        description: "deriv.be"
+        default: false
+
+jobs:
+  run_workflows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run publish_website workflow
+        uses: ./.github/workflows/publish_website.yml
+        with:
+          site_label_staging_webflow: ${{ github.event.inputs.site_label_staging_webflow }}
+          site_label_webflow: ${{ github.event.inputs.site_label_webflow }}
+          site_label_deriv_com: ${{ github.event.inputs.site_label_deriv_com }}
+          site_label_deriv_me: ${{ github.event.inputs.site_label_deriv_me }}
+          site_label_deriv_be: ${{ github.event.inputs.site_label_deriv_be }}
+
+      - name: Run sitemap_generator workflow
+        uses: ./.github/workflows/sitemap_generator.yml
+        with:
+          site_label_staging_webflow: ${{ github.event.inputs.site_label_staging_webflow }}
+          site_label_webflow: ${{ github.event.inputs.site_label_webflow }}
+          site_label_deriv_com: ${{ github.event.inputs.site_label_deriv_com }}
+          site_label_deriv_me: ${{ github.event.inputs.site_label_deriv_me }}
+          site_label_deriv_be: ${{ github.event.inputs.site_label_deriv_be }}
