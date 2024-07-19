@@ -16,7 +16,9 @@ runs:
         domain_name=$(echo $MAIN_DOMAIN | sed 's|https://||g')
         mkdir -p content/$domain_name
         cp sitemap.xml content/$domain_name/sitemap.xml
+        cat sitemap.xml
         cp robots.txt content/$domain_name/robots.txt
         node .github/modify_sitemap.js --new-domain $domain_name --input-file content/$domain_name/sitemap.xml
         node .github/modify_robots.js --sitemap-url $domain_name --input-file content/$domain_name/robots.txt
+        cat content/$domain_name/sitemap.xml
         rm sitemap.xml robots.txt

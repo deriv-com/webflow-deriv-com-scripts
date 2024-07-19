@@ -13,11 +13,11 @@ function updateSitemap(inputFile, newSitemapUrl) {
     if (data.match(/^Sitemap:/m)) {
       newContent = data.replace(
         /^Sitemap: .*/m,
-        `Sitemap: https://seo.deriv.com/${newSitemapUrl}/sitemap.xml`
+        `Sitemap: https://urls.deriv.com/sitemap.xml`
       );
     } else {
       newContent =
-        data + `\nSitemap: https://seo.deriv.com/${newSitemapUrl}/sitemap.xml`;
+        data + `\nSitemap: https://urls.deriv.com/sitemap.xml`;
     }
     if (data.match(/^Host:/m)) {
       newContent = newContent.replace(/^Host: .*/m, `Host: https://${newSitemapUrl}`);
