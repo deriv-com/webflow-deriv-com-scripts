@@ -19,17 +19,11 @@ jobs:
         shell: bash
         run: npm install yargs
 
-      - name: Download sitemap.xml and robots.txt
-        shell: bash
-        env:
-          BASE_DOMAIN: "https://staging.deriv.com"
-        run: |
-          curl -O $BASE_DOMAIN/sitemap.xml -O $BASE_DOMAIN/robots.txt
-
-      - name: Generate Sitemap and Robots.txt
-        uses: ./.github/actions/generate_sitemap_and_robots
+      - name: Generate Sitemap
+        uses: ./.github/actions/generate_sitemap
         with:
           main_domain: "https://deriv.com"
+          base_domain: "https://staging.deriv.com"
 
       - name: Upload to R2
         uses: ./.github/actions/upload_to_r2
@@ -38,3 +32,4 @@ jobs:
           r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2_bucket_name: ${{ secrets.R2_BUCKET_NAME }}
+          source_dir: "./content"
