@@ -24,7 +24,7 @@ const newDomain = argv["new-domain"];
 const inputFile = argv["input-file"];
 // Define the new domain
 // Read the input file
-fs.readFile(inputFile, "utf8", (err, data) => {
+fs.readFile(inputFile, "utf-8", (err, data) => {
   if (err) {
     console.error("Error reading the file:", err);
     return;
@@ -37,7 +37,7 @@ fs.readFile(inputFile, "utf8", (err, data) => {
   const newContent = data.replace(pattern, `https://${newDomain}`);
 
   // Write the modified content to the output file
-  fs.writeFile(inputFile, newContent, "utf8", (err) => {
+  fs.writeFile(inputFile, newContent, "utf-8", (err) => {
     if (err) {
       console.error("Error writing the file:", err);
       return;

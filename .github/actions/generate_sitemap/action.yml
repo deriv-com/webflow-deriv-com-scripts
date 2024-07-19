@@ -1,0 +1,25 @@
+name: "Generate Sitemap.xml"
+description: "Generate Sitemap.xml and robots.txt for all domains and upload to R2"
+inputs:
+  main_domain:
+    description: "Main domain for sitemap replacement"
+    required: true
+  base_domain:
+    description: "Base domain for sitemap download"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Download sitemap.xml
+      shell: bash
+      env:
+        BASE_DOMAIN: ${{ inputs.base_domain }}
+      run: curl --create-dirs -O --output-dir ./content -O $BASE_DOMAIN/sitemap.xml
+
+    - name: Replace sitemap URLs and create directories
+      shell: bash
+      env:
+        MAIN_DOMAIN: ${{ inputs.main_domain }}
+      run: |
+        domain_name=$(echo $MAIN_DOMAIN | sed 's|https://||g')
+        node .github/modify_sitemap.js --new-domain $domain_name --input-file ./content/sitemap.xml

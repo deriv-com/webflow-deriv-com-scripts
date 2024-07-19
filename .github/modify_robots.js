@@ -3,7 +3,7 @@ const yargs = require("yargs");
 
 // Function to update Sitemap entry in robots.txt
 function updateSitemap(inputFile, newSitemapUrl) {
-  fs.readFile(inputFile, "utf8", (err, data) => {
+  fs.readFile(inputFile, "utf-8", (err, data) => {
     if (err) {
       console.error("Error reading the file:", err);
       return;
@@ -13,16 +13,16 @@ function updateSitemap(inputFile, newSitemapUrl) {
     if (data.match(/^Sitemap:/m)) {
       newContent = data.replace(
         /^Sitemap: .*/m,
-        `Sitemap: https://seo.deriv.com/${newSitemapUrl}/sitemap.xml`
+        `Sitemap: https://urls.deriv.com/sitemap.xml`
       );
     } else {
       newContent =
-        data + `\nSitemap: https://seo.deriv.com/${newSitemapUrl}/sitemap.xml`;
+        data + `\nSitemap: https://urls.deriv.com/sitemap.xml`;
     }
     if (data.match(/^Host:/m)) {
       newContent = newContent.replace(/^Host: .*/m, `Host: https://${newSitemapUrl}`);
     }
-    fs.writeFile(inputFile, newContent, "utf8", (err) => {
+    fs.writeFile(inputFile, newContent, "utf-8", (err) => {
       if (err) {
         console.error("Error writing the file:", err);
         return;
