@@ -9,3 +9,4 @@ import "./hide-deriv-go";
 import "./changeBannerPadding";
 import "./closeMobileMenu";
 import "./liveChatFeatureFlag";
+import "./liveChatMinimizeOnReload";
