@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 index.html
 
+# dotenv environment variables file
+.env
+.env.*
+*.env
