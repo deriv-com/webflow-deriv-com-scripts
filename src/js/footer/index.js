@@ -13,3 +13,4 @@ import "./hideLiveChatExtraIcon";
 import "./derivGoDownload";
 import "./euPopUp";
 import "./disclaimerAddClassname";
+import "./mobileMenuAccordian";
