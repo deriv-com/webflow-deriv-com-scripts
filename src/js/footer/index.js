@@ -14,3 +14,4 @@ import "./derivGoDownload";
 import "./euPopUp";
 import "./disclaimerAddClassname";
 import "./mobileMenuAccordian";
+import "./loginFunctions";
