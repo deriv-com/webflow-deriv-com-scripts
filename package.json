@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "serve": "http-server ./dist -p 3456 --cors",
     "ngrok": "ngrok http 3456",
-    "test-bundle": "npm run build;npm-run-all --parallel  serve ngrok"
+    "test-bundle": "npm run build; npm-run-all --parallel  serve ngrok"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
