@@ -160,7 +160,7 @@ const getDomainAppID = () => {
   }
 };
 
-window.loginUrl = () => {
+export const loginUrl = () => {
   const server_url = localStorage.getItem("config.server_url");
   const langCookie = getCookieByKey(document.cookie, "webflow-user-language");
   let language = langCookie ? langCookie.toLowerCase() : "en";
@@ -177,7 +177,7 @@ window.loginUrl = () => {
     ? `&affiliate_token=${affiliate_token}`
     : "";
 
-  // Function which returns sub path to the specific trading platform
+  // Function which returns sub path to the specific trading platforms
   const supported_platforms = ["mt5", "bot", "derivx"];
   const redirectToTradingPlatform = () => {
     supported_platforms.filter(
