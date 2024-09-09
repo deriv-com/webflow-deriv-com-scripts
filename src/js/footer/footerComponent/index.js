@@ -66,11 +66,13 @@ export default () => {
   });
 };
 //Pre Load Traders hub login url when user is not logged in
-const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
-if (!isLoggedIn) {
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.href = "https://hub.deriv.com/tradershub/signup";
-  link.as = "document";
-  document.head.appendChild(link);
-}
+document.addEventListener("DOMContentLoaded", function () {
+  const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
+  if (!isLoggedIn) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.href = "https://hub.deriv.com/tradershub/signup";
+    link.as = "document";
+    document.head.appendChild(link);
+  }
+});
