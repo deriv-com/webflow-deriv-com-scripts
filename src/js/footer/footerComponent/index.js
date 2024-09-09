@@ -65,7 +65,7 @@ export default () => {
     }
   });
 };
-//Pre Load Traders hub login url when user is not logged into the platform
+//Pre Load Traders hub login url when user is not logged in
 document.addEventListener("DOMContentLoaded", function () {
   const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
   if (!isLoggedIn) {
@@ -80,7 +80,11 @@ document.addEventListener("DOMContentLoaded", function () {
 const handleOutSystemsRedirection = () => {
   const currentDomain = window.location.hostname;
   let env;
-  if (currentDomain === "deriv.com") {
+  if (
+    currentDomain === "deriv.com" ||
+    currentDomain === "deriv.be" ||
+    currentDomain === "deriv.me"
+  ) {
     env = "production";
   } else if (currentDomain === "staging.deriv.com") {
     env = "staging";
