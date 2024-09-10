@@ -75,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
     iframe.style.width = "0";
     iframe.style.height = "0";
     iframe.style.border = "none";
+    iframe.style.visibility = "hidden";
+    iframe.setAttribute("sandbox", "allow-same-origin allow-scripts");
     document.body.appendChild(iframe);
   }
 });
