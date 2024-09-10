@@ -94,7 +94,6 @@ const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
 if (!isLoggedIn) {
   var iframe = document.createElement("iframe");
   iframe.src = handleOutSystemsRedirection();
-  iframe.style.display = "none";
   iframe.style.width = "0";
   iframe.style.height = "0";
   iframe.style.border = "none";
