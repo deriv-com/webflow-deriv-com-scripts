@@ -69,11 +69,13 @@ export default () => {
 document.addEventListener("DOMContentLoaded", function () {
   const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
   if (!isLoggedIn) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.href = handleOutSystemsRedirection();
-    link.as = "document";
-    document.head.appendChild(link);
+    var iframe = document.createElement("iframe");
+    iframe.src = handleOutSystemsRedirection();
+    iframe.style.display = "none";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
   }
 });
 
