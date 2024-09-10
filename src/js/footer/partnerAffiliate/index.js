@@ -8,6 +8,6 @@ if (params.has("referrer") && token != null) {
   const referrer_token = getCookieByKey(document.cookie, "referrer_token");
   if (referrer_token !== token) {
     deleteCookie("referrer_token");
-    setCookie("referrer_token", token, 365);
+    setCookie("referrer_token", token, 365, ".deriv.com");
   }
 }
