@@ -66,22 +66,6 @@ export default () => {
   });
 };
 //Pre Load Traders hub login url when user is not logged in
-document.addEventListener("DOMContentLoaded", function () {
-  const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
-  if (!isLoggedIn) {
-    var iframe = document.createElement("iframe");
-    iframe.src = handleOutSystemsRedirection();
-    iframe.style.display = "none";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "none";
-    iframe.style.visibility = "hidden";
-    iframe.setAttribute("sandbox", "allow-same-origin allow-scripts");
-    console.log("Invoked iframe generation");
-    document.body.appendChild(iframe);
-  }
-});
-
 const handleOutSystemsRedirection = () => {
   const currentDomain = window.location.hostname;
   let env;
@@ -105,3 +89,16 @@ const handleOutSystemsRedirection = () => {
       return "https://dev-hub.deriv.com/tradershub/signup";
   }
 };
+
+const isLoggedIn = !!getCookieByKey(document.cookie, "client_information");
+if (!isLoggedIn) {
+  var iframe = document.createElement("iframe");
+  iframe.src = handleOutSystemsRedirection();
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "none";
+  iframe.style.visibility = "hidden";
+  iframe.setAttribute("sandbox", "allow-same-origin allow-scripts");
+  console.log("Invoked iframe generation");
+  document.body.appendChild(iframe);
+}
