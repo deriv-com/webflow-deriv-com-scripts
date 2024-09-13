@@ -16,3 +16,4 @@ import "./disclaimerAddClassname";
 import "./mobileMenuAccordian";
 import "./partnerAffiliate";
 import "./loginFunctions";
+import "./languageRedirect";
