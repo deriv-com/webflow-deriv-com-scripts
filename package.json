@@ -12,9 +12,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "http-server ./dist -p 3456 --cors",
+    "serve": "npm run build && http-server ./dist -p 3456 --cors",
     "ngrok": "ngrok http 3456",
-    "test-bundle": "npm run build; npm-run-all --parallel  serve ngrok"
+    "ngrok-auth": "ngrok config add-authtoken $NGROK_TOKEN"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
