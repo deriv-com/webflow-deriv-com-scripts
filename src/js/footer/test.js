@@ -1,6 +1,8 @@
-alert('test-2')
 
 
+
+
+window.customLoader = "static version"
 
 // Listen for DOMContentLoaded event
 
