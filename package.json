@@ -13,7 +13,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "serve": "npm run build && http-server ./dist -p 3456 --cors",
-    "precommit:generate-bundle": "node scripts/generate-bundle-script.js"
+    "pre-commit:generate-bundle": "node scripts/generate-bundle-script.js"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
