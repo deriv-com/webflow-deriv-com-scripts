@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run the precommit:generate-bundle script
+npm run pre-commit:generate-bundle
