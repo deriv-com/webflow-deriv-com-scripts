@@ -25,8 +25,9 @@ jobs:
       - name: Generate CDN URL
         id: generate-url
         run: |
-          node scripts/generate-bundle-url.js > url.txt
-          cat url.txt
+          # Generate the URL and capture it as an output
+          URL=$(node scripts/generate-bundle-url.js)
+          echo "URL=$URL" >> $GITHUB_ENV
          
       - name: Create or update PR comment with CDN URL
         uses: peter-evans/create-or-update-comment@v3
@@ -36,8 +37,6 @@ jobs:
           body: |
             ### Test Bundle URL:
             
-            [Preview script bundle](${ { steps.generate-url.outputs.url }})
+            [Preview script bundle](${ { env.URL }})
             
             ${ { github.event.pull_request.body }}
-        env:
-          GITHUB_EVENT_PULL_REQUEST_BODY: ${{ github.event.pull_request.body }}
