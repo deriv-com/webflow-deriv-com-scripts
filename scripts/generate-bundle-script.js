@@ -34,3 +34,5 @@ exec('npm run build', { cwd: rootDir }, (err, stdout, stderr) => {
     });
   });
 });
+
+throw new Error('Simulated error for testing purposes');
