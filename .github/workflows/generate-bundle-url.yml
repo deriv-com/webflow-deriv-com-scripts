@@ -37,6 +37,8 @@ jobs:
           body: |
             ### Test Bundle URL:
             
-            [Preview script bundle](${ { env.URL }})
+            [Preview script bundle](${{ env.URL }})
             
-            ${ { github.event.pull_request.body }}
+            ${{
+              github.event.pull_request.body
+            }}
