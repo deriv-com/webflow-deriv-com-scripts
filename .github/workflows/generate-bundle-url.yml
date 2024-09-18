@@ -1,0 +1,41 @@
+name: Generate Bundle CDN URL
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  generate-url:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate CDN URL
+        id: generate-url
+        run: |
+          node scripts/generate-bundle-url.js > url.txt
+          cat url.txt
+        
+      - name: Update PR with CDN URL
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const url = fs.readFileSync('url.txt', 'utf8').trim();
+            const pr_number = process.env.GITHUB_REF.split('/').pop();
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+            await octokit.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number,
+              body: `### Test Bundle URL: \n\n[Preview script bundle](${url})\n\n${context.payload.pull_request.body}`
+            });
