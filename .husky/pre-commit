@@ -1,5 +1,15 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+echo "Running pre-commit hook..."
+
 # Run the precommit:generate-bundle script
 npm run pre-commit:generate-bundle
+
+# Check if the script ran successfully
+if [ $? -ne 0 ]; then
+  echo "Pre-commit hook failed."
+  exit 1
+fi
+
+echo "Pre-commit hook completed successfully."
