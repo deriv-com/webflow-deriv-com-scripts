@@ -27,7 +27,7 @@ jobs:
         run: |
           node scripts/generate-bundle-url.js > url.txt
           cat url.txt
-        
+         
       - name: Update PR with CDN URL
         uses: actions/github-script@v6
         with:
@@ -35,7 +35,8 @@ jobs:
             const fs = require('fs');
             const url = fs.readFileSync('url.txt', 'utf8').trim();
             const pr_number = process.env.GITHUB_REF.split('/').pop();
-            const octokit = require('@actions/github').getOctokit(process.env.GITHUB_TOKEN);
+            const { getOctokit } = require('@actions/github');
+            const octokit = getOctokit(process.env.GITHUB_TOKEN);
             await octokit.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
