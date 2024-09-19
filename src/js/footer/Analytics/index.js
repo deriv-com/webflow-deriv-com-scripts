@@ -1,5 +1,4 @@
 // <!--Analytics block starts here-->
-
 const setEvent = (event) => {
   let storedEvents = [];
   let cacheCookie = parseCookies(document.cookie, "cached_analytics_events");
@@ -12,7 +11,7 @@ const setEvent = (event) => {
 };
 
 const trackEventWithCache = (event) => {
-  if (window.rudderanalytics) {
+  if (Analytics) {
     Analytics?.Analytics?.trackEvent(event.name, event.properties);
   } else {
     setEvent(event);
@@ -106,13 +105,14 @@ if (btnLoginNavbar) {
   });
 }
 
-const RUDDERSTACK_STAGING_KEY = "1lN3tsFD2nruGFgM5F074DC2hMB";
-const RUDDERSTACK_PRODUCTION_KEY = "1oV5agvlcnCZ6IH94wCKM1oR8Pd";
-const GB_STAGING_CLIENT_KEY = "sdk-9wuqJ1mlcQsSyZQ";
+const RUDDERSTACK_STAGING_KEY = process.env.RUDDERSTACK_STAGING_KEY;
+const RUDDERSTACK_PRODUCTION_KEY = process.env.RUDDERSTACK_PRODUCTION_KEY;
+const GB_STAGING_CLIENT_KEY = process.env.GB_STAGING_CLIENT_KEY;
 const GB_STAGING_DECRYPTION_KEY = "";
-const GB_PROD_CLIENT_KEY = "sdk-UhZV3cNEg5nLNLNS";
-const GB_PROD_DECRYPTION_KEY = "nre64BV0dNIa44zW4tz5ow==";
+const GB_PROD_CLIENT_KEY = process.env.GB_PROD_CLIENT_KEY;
+const GB_PROD_DECRYPTION_KEY = process.env.GB_PROD_DECRYPTION_KEY;
 var GB_CLIENT_KEY, RUDDERSTACK_KEY, GB_DECRYPTION_KEY;
+
 if (
   window.location.hostname === "deriv.com" ||
   window.location.hostname === "deriv.be" ||
@@ -162,8 +162,7 @@ const initialiseConfig = {
         document.cookie,
         "client_information"
       ),
-      loggedIn:
-        !!window.parseCookies(document.cookie, "client_information") || false,
+      loggedIn: !!window.parseCookies(document.cookie, "client_information"),
       url: window.location.href,
     },
   },
