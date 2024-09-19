@@ -208,11 +208,11 @@ const handleOutSystemsRedirection = () => {
   }
   switch (env) {
     case "production":
-      return "https://hub.deriv.com/tradershub/preload-helper";
+      return "https://hub.deriv.com/tradershub/hub";
     case "staging":
-      return "https://staging-hub.deriv.com/tradershub/preload-helper";
+      return "https://hub.deriv.com/tradershub/hub";
     default:
-      return "https://staging-hub.deriv.com/tradershub/preload-helper";
+      return "https://hub.deriv.com/tradershub/hub";
   }
 };
 
