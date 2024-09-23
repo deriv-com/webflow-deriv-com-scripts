@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 
 // Define your GitHub repository details
 const repoName = 'deriv-com/webflow-deriv-com-scripts';
-const filePath = 'src/bundle-script.min.js';
+const filePath = 'src/experiment-script.min.js';
 
 // Step 1: Get the latest commit hash
 exec('git rev-parse HEAD', (err, stdout, stderr) => {

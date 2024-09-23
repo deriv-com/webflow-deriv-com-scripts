@@ -4,8 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.resolve(__dirname, "..");
-const srcFile = path.join(rootDir, "dist/js/footer_scripts.min.js");
-const destFile = path.join(rootDir, "src/bundle-script.min.js");
+const srcFile = path.join(rootDir, "dist/js/experiment_scripts.min.js");
+const destFile = path.join(rootDir, "src/experiment-script.min.js");
 
 // Step 1: Run the build command
 exec("npm run build", { cwd: rootDir }, (err, stdout, stderr) => {
