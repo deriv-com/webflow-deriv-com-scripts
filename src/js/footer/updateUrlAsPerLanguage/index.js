@@ -58,6 +58,4 @@ const updateURLAsPerUserLanguage = () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-  updateURLAsPerUserLanguage();
-});
+updateURLAsPerUserLanguage();

@@ -33,40 +33,39 @@ function useAuthCheck() {
       document.addEventListener("authStatusChange", callback),
   };
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const authChecker = useAuthCheck();
 
-  // Listen for authentication status changes
-  authChecker.onAuthStatusChange(() => {
-    if (authChecker.getAuthCheckedStatus() && authChecker.getLoggedInStatus()) {
-      const elements_logged_in = document.querySelectorAll(".logged-in-btn");
+const authChecker = useAuthCheck();
 
-      elements_logged_in.forEach((elements_logged_in) => {
-        elements_logged_in.classList.remove("hide-element");
-      });
+// Listen for authentication status changes
+authChecker.onAuthStatusChange(() => {
+  if (authChecker.getAuthCheckedStatus() && authChecker.getLoggedInStatus()) {
+    const elements_logged_in = document.querySelectorAll(".logged-in-btn");
 
-      const elements_logged_out = document.querySelectorAll(".logged-out-btn");
+    elements_logged_in.forEach((elements_logged_in) => {
+      elements_logged_in.classList.remove("hide-element");
+    });
 
-      elements_logged_out.forEach((elements_logged_out) => {
-        elements_logged_out.classList.add("hide-element");
-      });
-    } else if (
-      authChecker.getAuthCheckedStatus() &&
-      !authChecker.getLoggedInStatus()
-    ) {
-      const elements_logged_out = document.querySelectorAll(".logged-out-btn");
+    const elements_logged_out = document.querySelectorAll(".logged-out-btn");
 
-      elements_logged_out.forEach((elements_logged_out) => {
-        elements_logged_out.classList.remove("hide-element");
-      });
+    elements_logged_out.forEach((elements_logged_out) => {
+      elements_logged_out.classList.add("hide-element");
+    });
+  } else if (
+    authChecker.getAuthCheckedStatus() &&
+    !authChecker.getLoggedInStatus()
+  ) {
+    const elements_logged_out = document.querySelectorAll(".logged-out-btn");
 
-      const elements_logged_in = document.querySelectorAll(".logged-in-btn");
+    elements_logged_out.forEach((elements_logged_out) => {
+      elements_logged_out.classList.remove("hide-element");
+    });
 
-      elements_logged_in.forEach((elements_logged_in) => {
-        elements_logged_in.classList.add("hide-element");
-      });
-    }
-  });
+    const elements_logged_in = document.querySelectorAll(".logged-in-btn");
+
+    elements_logged_in.forEach((elements_logged_in) => {
+      elements_logged_in.classList.add("hide-element");
+    });
+  }
 });
 
 //----- end of auth check -----

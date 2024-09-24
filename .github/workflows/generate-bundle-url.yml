@@ -1,0 +1,41 @@
+name: Generate Bundle CDN URL
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write  # Ensure the token has write access to PRs
+
+jobs:
+  generate-url:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate CDN URL
+        id: generate-url
+        run: |
+          # Generate the URL and capture it as an output
+          URL=$(node scripts/generate-bundle-url.js)
+          echo "URL=$URL" >> $GITHUB_ENV
+         
+      - name: Create or update PR comment with CDN URL
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### CUSTOM FOOTER SCRIPT
+            
+            ${{ env.URL }}
+            
