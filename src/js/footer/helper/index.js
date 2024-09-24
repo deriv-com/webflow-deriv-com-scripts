@@ -191,3 +191,39 @@ export const loginUrl = () => {
   }
   return `${window.getOauthUrl()}/oauth2/authorize?app_id=${getDomainAppID()}&l=${language}&brand=deriv${affiliate_token_link}${cookies_link}&platform=${sub_url}`;
 };
+
+const handleOutSystemsRedirection = () => {
+  const currentDomain = window.location.hostname;
+  let env;
+  if (
+    currentDomain === "deriv.com" ||
+    currentDomain === "deriv.be" ||
+    currentDomain === "deriv.me"
+  ) {
+    env = "production";
+  } else if (currentDomain === "staging.deriv.com") {
+    env = "staging";
+  } else {
+    env = "development";
+  }
+  switch (env) {
+    case "production":
+      return "https://hub.deriv.com/tradershub/signup";
+    case "staging":
+      return "https://staging-hub.deriv.com/tradershub/signup";
+    default:
+      return "https://dev-hub.deriv.com/tradershub/signup";
+  }
+};
+
+const isUserLoggedIn = !!getCookieByKey(document.cookie, "client_information");
+if (!isUserLoggedIn) {
+  var iframe = document.createElement("iframe");
+  iframe.src = handleOutSystemsRedirection();
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "none";
+  iframe.style.visibility = "hidden";
+  iframe.setAttribute("sandbox", "allow-same-origin allow-scripts");
+  document.body.appendChild(iframe);
+}
