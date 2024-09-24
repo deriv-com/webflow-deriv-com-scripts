@@ -5,10 +5,6 @@ inputs:
     description: 'Publish to staging.deriv.com'
     required: true
     default: 'false'
-  site_label_webflow:
-    description: 'Publish to webflow.deriv.com'
-    required: true
-    default: 'false'
   site_label_deriv_com:
     description: 'Publish to deriv.com'
     required: true
@@ -26,9 +22,6 @@ inputs:
     required: true
   staging_site_id:
     description: 'Staging Site ID'
-    required: true
-  webflow_site_id:
-    description: 'Webflow Site ID'
     required: true
   deriv_com_site_id:
     description: 'Deriv.com Site ID'
@@ -58,10 +51,6 @@ runs:
         if [ "${{ inputs.site_label_staging }}" == "true" ]; then
           SITES_TO_PUBLISH+=("\"staging.deriv.com\"")
           SITES_DEPLOY_IDS+=("\"${{ inputs.staging_site_id }}\"")
-        fi
-        if [ "${{ inputs.site_label_webflow }}" == "true" ]; then
-          SITES_TO_PUBLISH+=("\"webflow.deriv.com\"")
-          SITES_DEPLOY_IDS+=("\"${{ inputs.webflow_site_id }}\"")
         fi
         if [ "${{ inputs.site_label_deriv_com }}" == "true" ]; then
           SITES_TO_PUBLISH+=("\"deriv.com\"")

@@ -34,7 +34,7 @@ fs.readFile(inputFile, "utf8", (err, data) => {
   const urlBlockPattern = /(<url>[\s\S]*?<\/url>)/g;
 
   let filteredContent = newContent.replace(urlBlockPattern, (match) => {
-    if (/https:\/\/deriv\.com\/eu\//.test(match)) {
+    if (/https:\/\/deriv\.com(\/[a-z-]{2,5})?\/eu\//.test(match)) {
       return "";
     }
     return match;

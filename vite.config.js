@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         head_scripts: resolve(__dirname, "src/js/head/index.js"),
         footer_scripts: resolve(__dirname, "src/js/footer/index.js"),
+        experiment_scripts: resolve(__dirname, "src/js/experiment/index.js"),
         styles: resolve(__dirname, "src/css/index.css"),
       },
       output: {
