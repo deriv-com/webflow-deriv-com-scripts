@@ -1,7 +1,788 @@
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -o-font-smoothing: antialiased;
-    scrollbar-width: none;
+/* Set color style to inherit */
+.inherit-color * {
+  color: inherit;
+}
 
+/* Focus state style for keyboard navigation for the focusable elements */
+*[tabindex]:focus-visible,
+input[type="file"]:focus-visible {
+  outline: 0.125rem solid #4d65ff;
+  outline-offset: 0.125rem;
+}
+
+/* Get rid of top margin on first element in any rich text element */
+.w-richtext > :not(div):first-child,
+.w-richtext > div:first-child > :first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Get rid of bottom margin on last element in any rich text element */
+.w-richtext > :last-child,
+.w-richtext ol li:last-child,
+.w-richtext ul li:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Prevent all click and hover interaction with an element */
+.pointer-events-off {
+  pointer-events: none;
+}
+
+/* Enables all click and hover interaction with an element */
+.pointer-events-on {
+  pointer-events: auto;
+}
+
+/* Create a class of .div-square which maintains a 1:1 dimension of a div */
+.div-square::after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+/* Make sure containers never lose their center alignment */
+.container-medium,
+.container-small,
+.container-large {
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+/* 
+Make the following elements inherit typography styles from the parent and not have hardcoded values. 
+Important: You will not be able to style for example "All Links" in Designer with this CSS applied.
+Uncomment this CSS to use it in the project. Leave this message for future hand-off.
+*/
+/*
+a,
+.w-input,
+.w-select,
+.w-tab-link,
+.w-nav-link,
+.w-dropdown-btn,
+.w-dropdown-toggle,
+.w-dropdown-link {
+  color: inherit;
+  text-decoration: inherit;
+  font-size: inherit;
+}
+*/
+
+/* Apply "..." after 3 lines of text */
+.text-style-3lines {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Apply "..." after 2 lines of text */
+.text-style-2lines {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Adds inline flex display */
+.display-inlineflex {
+  display: inline-flex;
+}
+
+/* These classes are never overwritten */
+.hide {
+  display: none !important;
+}
+
+@media screen and (max-width: 991px) {
+  .hide,
+  .hide-tablet {
+    display: none !important;
   }
+}
+@media screen and (max-width: 767px) {
+  .disclaimer-visible .max-width-medium.max-width-full-mobile-landscape {
+    max-width: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .hide-mobile-landscape {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 479px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+.margin-0 {
+  margin: 0rem !important;
+}
+
+.padding-0 {
+  padding: 0rem !important;
+}
+
+.spacing-clean {
+  padding: 0rem !important;
+  margin: 0rem !important;
+}
+
+.margin-top {
+  margin-right: 0rem !important;
+  margin-bottom: 0rem !important;
+  margin-left: 0rem !important;
+}
+
+.padding-top {
+  padding-right: 0rem !important;
+  padding-bottom: 0rem !important;
+  padding-left: 0rem !important;
+}
+
+.margin-right {
+  margin-top: 0rem !important;
+  margin-bottom: 0rem !important;
+  margin-left: 0rem !important;
+}
+
+.padding-right {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem !important;
+  padding-left: 0rem !important;
+}
+
+.margin-bottom {
+  margin-top: 0rem !important;
+  margin-right: 0rem !important;
+  margin-left: 0rem !important;
+}
+
+.padding-bottom {
+  padding-top: 0rem !important;
+  padding-right: 0rem !important;
+  padding-left: 0rem !important;
+}
+
+.margin-left {
+  margin-top: 0rem !important;
+  margin-right: 0rem !important;
+  margin-bottom: 0rem !important;
+}
+
+.padding-left {
+  padding-top: 0rem !important;
+  padding-right: 0rem !important;
+  padding-bottom: 0rem !important;
+}
+
+.margin-horizontal {
+  margin-top: 0rem !important;
+  margin-bottom: 0rem !important;
+}
+
+.padding-horizontal {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem !important;
+}
+
+.margin-vertical {
+  margin-right: 0rem !important;
+  margin-left: 0rem !important;
+}
+
+.padding-vertical {
+  padding-right: 0rem !important;
+  padding-left: 0rem !important;
+}
+
+/* Apply "..." at 100% width */
+.truncate-width {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Removes native scrollbar */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.accordion_dropdown.is-active-accordion,
+.tab-dropdown.is-active-accordion {
+  background: var(--background-color--background-alternate);
+}
+
+.accordion_dropdown.is-white.is-active-accordion {
+  background: rgba(0, 0, 0, 0);
+}
+
+.accordion_arrow.is-active-accordion {
+  transform: rotate(180deg);
+}
+
+.help_tab.fs-cmsfilter_active {
+  color: var(--text-color--text-primary);
+  border-bottom: 2px solid var(--border-color--border-primary);
+}
+
+.w-slider-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #4146528f;
+}
+
+.w-slider-dot.w-active {
+  background: var(--base-color-neutral--black);
+}
+
+.blog-filters_button.fs-cmsfilter_active {
+  background: var(--base-color-neutral--black);
+  color: var(--text-color--text-alternate);
+  border-color: var(--border-color--border-primary);
+}
+
+@media screen and (min-width: 992px) {
+  .blogs_link-block:hover .blogs_image {
+    transform: scale(1.07);
+  }
+}
+
+.partner-navbar_component .w-nav-link.w--current {
+  color: #e12e3a; /** Deriv partner navbar active link color **/
+}
+
+.customLink {
+  color: #ff444f !important;
+}
+
+.content_market-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.contact-social_link-wp:hover .is-hover,
+.contact-social_link-live:hover .is-hover {
+  display: block;
+}
+
+.contact-social_link-wp:hover .is-normal,
+.contact-social_link-live:hover .is-normal {
+  display: none;
+}
+
+/* Input field styling */
+
+input,
+textarea,
+[contenteditable] {
+  caret-color: #000000b8;
+}
+
+.floating-label {
+  pointer-events: none;
+}
+
+.custom-input:not(:placeholder-shown) {
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.custom-input:not(:placeholder-shown) ~ .floating-label {
+  color: #6002ee;
+  /** transform: scale(.75); **/
+  top: 0.5rem;
+  font-size: 12px;
+}
+
+.custom-input:not(:focus) ~ .floating-label {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.custom-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  margin-bottom: 0px;
+  padding: 1rem 0.7rem;
+  border: 1px solid #00000014;
+  box-shadow: none;
+  transition-property: background-color, border-color, border-width;
+  transition-duration: 150ms, 150ms, 0ms;
+  transition-timing-function: ease, ease, ease;
+  font-size: 1rem;
+  background-color: rgb(0 0 0 / 0%);
+}
+
+.text-input.custom {
+  height: 56px;
+}
+
+.custom-input.-wfp-focus,
+:where(html:not(.wf-design-mode)) .custom-input:focus {
+  border-bottom-width: 2px;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  background-color: rgb(0 0 0 / 0%);
+  box-shadow: none;
+}
+
+.w-input:focus,
+.w-select:focus {
+  outline: 0;
+  border: 1px solid var(--core-color-solid-slate-1400, #000);
+}
+
+.w-input,
+.w-select {
+  color: #000000b8;
+}
+.custom-input:not(:placeholder-shown) + .floating-label {
+  color: #000000b8;
+}
+
+input,
+textarea,
+[contenteditable] {
+  caret-color: #000000b8;
+}
+
+.custom-input:not(:placeholder-shown) + .floating-label {
+  color: #000000b8;
+}
+
+.with-asterisk:after {
+  content: "*";
+  color: #c40000;
+  margin-left: 3px;
+}
+
+/* Error state styles */
+.custom-input.error-field:not(:focus) + .floating-label {
+  color: #de0040;
+}
+.custom-input.error-field {
+  border-color: #de0040;
+}
+.input-error-text.error-field {
+  display: block;
+  padding-top: 4px;
+  padding-left: var(--16-px);
+  color: #de0040;
+}
+.error-field-icon.error-field {
+  position: absolute;
+  width: 24px;
+}
+.error-field-icon.error-field {
+  position: absolute;
+  width: 24px;
+  inset: 0% 2% 0% auto;
+  display: block;
+}
+.error-field-icon {
+  display: none;
+}
+
+.input-error-text {
+  display: none;
+}
+
+.error-message {
+  color: rgba(230, 25, 14, 0.72) !important; /* Color of the error message */
+  font-size: 12px; /* Adjust font size as needed */
+  margin-top: 4px; /* Add space between field and message */
+}
+
+/* After login and logged ou */
+.logged-out-btn.hide-element {
+  display: none !important;
+}
+
+.logged-in-btn.hide-element {
+  display: none !important;
+}
+
+/*added hide-element classed to ctrader check email screens */
+.section_ctrader-check-email.hide-element {
+  display: none !important;
+}
+.section_ctrader-check-email-verify.hide-element {
+  display: none !important;
+}
+.section_page-header_dint-get-email.hide-element {
+  display: none !important;
+}
+/* Affiliates page range slider handle */
+.rangeslider_handle:focus {
+  outline: none !important;
+}
+
+.contact-social_link-wp:hover .is-hover,
+.contact-social_link-live:hover .is-hover {
+  display: block;
+}
+
+.contact-social_link-wp:hover .is-normal,
+.contact-social_link-live:hover .is-normal {
+  display: none;
+}
+
+.margin-bottom-md {
+  margin-bottom: 0.2rem !important;
+}
+input.error-field::placeholder {
+  color: red !important;
+}
+
+.disclaimer-active .header_background-image-wrapper {
+  top: 5%;
+}
+
+@media screen and (max-width: 430px) {
+  .disclaimer-active .header_background-image-wrapper {
+    top: 10%;
+  }
+}
+
+.error-field-block {
+  border: 1px solid #de0040;
+}
+.input-error-text.error-field-block {
+  display: block;
+  border: none;
+}
+.sn_form img#email-sign-up-error-icon {
+  width: 24px;
+  border: none;
+  position: absolute;
+  top: 14px;
+  height: 25px;
+  right: 9px;
+}
+.sn_form input.error-field-block:focus {
+  border-color: #de0040;
+}
+.error-field-icon.error-field-block {
+  display: block;
+}
+
+.footer_logo svg {
+  max-width: 72px;
+}
+
+/* For trustpilot code */
+span#translations-customerssay {
+  font-family: IBM Plex Sans, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: red;
+}
+
+.navbar_icon {
+  transition: transform 0.3s;
+}
+.navbar_accordion-content {
+  transition: max-height 0.3s ease, padding 0.3s ease, transform 0.3s ease;
+  transform: translateY(-20px);
+}
+
+.navbar_accordion-trigger:before {
+  display: none;
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 4px;
+  height: 44px;
+  background: #ff444f;
+}
+.navbar_accordion-trigger.open:before {
+  display: block;
+}
+
+.navbar_accordion-trigger.open svg {
+  transform: rotate(180deg);
+  transition: all 0.5s ease-in-out;
+}
+
+.navbar_accordion-trigger.current:before {
+  display: block;
+}
+
+/* Disclaimer Responsive Issue Fixes - START */
+
+@media (max-width: 479px) {
+  .disclaimer-active .header_background-image-wrapper {
+    top: 5%;
+  }
+}
+@media (min-width: 480px) and (max-width: 610px) {
+  .disclaimer-active .header_background-image-wrapper {
+    top: 15%;
+  }
+}
+@media (min-width: 611px) and (max-width: 767px) {
+  .disclaimer-active .header_background-image-wrapper {
+    top: 12%;
+  }
+}
+@media (min-width: 768px) {
+  .disclaimer-active .header_background-image-wrapper {
+    top: 7%;
+  }
+}
+
+/* Disclaimer Responsive Issue Fixes - END !!! - this overwrites the required styles - !!! */
+/*.new-navbar_dropdown-content-bottom a.new-navbar_dropdown-link:hover {
+    background: transparent;
+}*/
+
+/* Fix for Select issue for safari and firefox */
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+/*to remove the password icon */
+::-ms-reveal {
+  display: none;
+}
+
+.page-wrapper.nopad {
+  padding: 0px !important;
+}
+
+.disclaimer-show .menu-wrapper {
+  height: 80px;
+}
+
+.trustpilot-widget a[rel~="noopener"] {
+  visibility: hidden;
+}
+
+/* Navbar bug solution */
+.new-navbar_component .new-navbar_container > .new-navbar_menu {
+  transform: none !important;
+}
+
+.input-group .error-field-icon.error-field {
+  top: 16px;
+}
+/* ONLY ARABIC START*/
+
+.dir-ltr {
+  direction: ltr;
+  text-align: left;
+}
+.new-navbar_menu.is-padding-0.is-adaptive:lang(ar) {
+  margin-right: 0px;
+}
+
+:dir(rtl) .navbar_accordion-trigger:before {
+  left: auto;
+  right: 0px;
+}
+
+:dir(rtl) .sn_form img#email-sign-up-error-icon,
+:dir(rtl) .error-field-icon.error-field {
+  left: 8px;
+  right: auto;
+}
+
+:dir(rtl) input#mobile-number {
+  text-align: right;
+}
+
+a#profile-link:focus {
+  outline: none;
+}
+
+/* ONLY ARABIC END*/
+@media (max-width: 768px) {
+  .blog-filters .w-dropdown {
+    display: contents;
+  }
+}
+/*
+.email-illustration #verification-text-c-trader{
+  word-wrap: break-word; 
+  word-break: break-all; 
+  overflow-wrap: break-word; 
+  white-space: normal;
+}
+*/
+
+.show-cookie .cookie-middle-wrapper {
+  margin-bottom: 85px;
+}
+
+.show-cookie .cookie-middle-wrapper:lang(de),
+.show-cookie .cookie-middle-wrapper:lang(fr),
+.show-cookie .cookie-middle-wrapper:lang(ru) {
+  margin-bottom: 106px;
+}
+@media (max-width: 1025px) {
+  .disclaimer_wrapper {
+    display: none;
+  }
+  .disclaimer_wrapper.head,
+  .head .banner_disclaimer.hide-element {
+    display: block;
+  }
+  .show-cookie .cookie-middle-wrapper {
+    margin-left: 45px;
+    margin-bottom: 20px;
+  }
+  .show-cookie .cookie-middle-wrapper:lang(ar) {
+    margin-right: 45px;
+  }
+}
+
+@media (max-width: 478px) {
+  .show-cookie .cookie-middle-wrapper {
+    margin-bottom: 0px;
+    margin-left: 0px;
+  }
+}
+.foot .banner_disclaimer.hide-element {
+  display: block;
+}
+
+@media (max-width: 430px) {
+  .show-cookie .cookie-middle-wrapper:lang(de),
+  .show-cookie .cookie-middle-wrapper:lang(fr),
+  .show-cookie .cookie-middle-wrapper:lang(ru),
+  .show-cookie .cookie-middle-wrapper:lang(de) {
+    margin-bottom: 0px;
+  }
+  .show-cookie a.social-proof_link {
+    z-index: -1;
+  }
+
+  .show-cookie .cookie-middle-wrapper:lang(ar) {
+    margin-right: 0px;
+  }
+  .show-cookie .contact-social_links-wrapper.is-whatsapp {
+    bottom: 10.5rem;
+  }
+}
+@media (min-width: 1025px) {
+  .disclaimer-visible #live_chat-wrapper,
+  .disclaimer-visible .contact-social_links-wrapper {
+    bottom: 6rem;
+  }
+
+  .disclaimer-visible #live_chat-wrapper:lang(de),
+  .disclaimer-visible #live_chat-wrapper:lang(fr),
+  .disclaimer-visible #live_chat-wrapper:lang(ru) {
+    bottom: 8rem;
+  }
+
+  .disclaimer-visible .footer_texts {
+    padding-bottom: 70px;
+  }
+}
+.cookies_banner-wrapper {
+  box-shadow: 0 0px 8px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0px 8px rgba(0, 0, 0, 0.2);
+}
+
+.show-cookie div#floating_cta {
+  display: none;
+}
+
+.show-cookie .footer_bottom-wrapper {
+  margin-bottom: 128px;
+}
+
+@media (max-width: 430px) {
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(fr),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(pt),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(vi),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(bn),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(tr),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(it),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(pl) {
+    bottom: 12.5rem;
+  }
+
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(ru),
+  .show-cookie .contact-social_links-wrapper.is-whatsapp:lang(de) {
+    bottom: 13.5rem;
+  }
+}
+
+/* 25 years logo alignment */
+.new-navbar_main-wrapper .logo-wrapper-25 {
+  padding-top: 4px;
+}
+
+.prime-form-group .error-field-icon.error-field {
+  top: 16px;
+}
+.prime-form-group .custom-input:not(:placeholder-shown) ~ .floating-label {
+  color: #000000b8;
+}
+
+.form-group-wrapper.custom {
+  transform: none !important;
+  transform-style: unset !important;
+}
+
+/* START - This CSS is for button/dropdown component */
+
+.dropdown-component.open .dropdown-component_list {
+  display: block;
+}
+
+.dropdown-component:after {
+  content: "▼";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #333;
+  pointer-events: none;
+}
+/* END - This CSS is for button/dropdown component */
+
+:root {
+  --container-xlarge-width: 77rem;
+  --overflowMargin: calc((100vw - var(--container-xlarge-width)) / 2);
+}
+
+.testimonial_list.is-custom-margin {
+  margin-left: var(--overflowMargin);
+  /* Other styles for the section */
+}
+
+.is-custom-margin .testimonial-item.w-dyn-item:last-child {
+  margin-right: var(--overflowMargin);
+}
+
+.dropdown-component_content-block {
+  margin-top: 20px;
+}
+
+.overflow-word a {
+  overflow-wrap: break-word;
+}
+a.deriv-tech-header_tablet-link.is-overlay:after {
+  content: "";
+  z-index: -1;
+  opacity: 0.4;
+  background-image: linear-gradient(181.93deg, #11141b00 3.15%, #11141b 50.01%);
+  height: 71%;
+  position: absolute;
+  inset: auto 0% 0%;
+}
