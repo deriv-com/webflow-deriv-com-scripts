@@ -36,6 +36,20 @@ jobs:
           deriv_me_site_id: ${{ secrets.DERIV_ME_SITE_ID }}
           deriv_be_site_id: ${{ secrets.DERIV_BE_SITE_ID }}
           webflow_general_site_id: ${{ secrets.WEBFLOW_GENERAL_SITE_ID }}
+      
+      # Trigger DR workflow only on production publishes.
+      - name: Trigger DR Workflow
+        if: contains(steps.publish.outputs.SITES_ARRAY, 'deriv.com') || contains(steps.publish.outputs.SITES_ARRAY, 'deriv.be') || contains(steps.publish.outputs.SITES_ARRAY, 'deriv.me')
+        run: |
+          repo_owner=${{ secrets.REPO_OWNER }}
+          repo_name=${{ secrets.REPO_NAME }}
+
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.PAT }}" \
+          https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
+          -d "{\"event_type\": \"trigger-sitemap-download\"}"
+
   send_slack_success:
     runs-on: ubuntu-latest
     needs: [publish_site]
