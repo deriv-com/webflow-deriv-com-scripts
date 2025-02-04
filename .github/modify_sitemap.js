@@ -54,6 +54,8 @@ fs.readFile(inputFile, "utf8", (err, data) => {
     "https://deriv.com/ko/blog/posts/whats-expected-in-gold-after-the-recent-rally-ff68c",
     "https://deriv.com/es/blog/posts/5-strategies-to-balance-risk-and-reward-in-trading",
     "https://deriv.com/dynamic-trading-specifications",
+    "https://deriv.com/locations/guernsey",
+    "https://deriv.com/eu/locations/guernsey",
   ];
 
   let filteredContent = newContent.replace(urlBlockPattern, (match) => {
