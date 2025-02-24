@@ -58,7 +58,16 @@ fs.readFile(inputFile, "utf8", (err, data) => {
     "https://deriv.com/eu/locations/guernsey",
   ];
 
+  const excludedPatterns = [
+    "/partners-help-centre-questions/",
+  ];
+
   let filteredContent = newContent.replace(urlBlockPattern, (match) => {
+    // Check for excluded patterns
+    if (excludedPatterns.some(pattern => match.includes(pattern))) {
+      return "";
+    }
+
     // First check if the entire URL block contains any of the static URLs
     const containsExcludedUrl = staticDocUrls.some((url) =>
       match.includes(url)
