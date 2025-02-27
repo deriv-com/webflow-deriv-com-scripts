@@ -37,7 +37,8 @@ const updateURLAsPerUserLanguage = () => {
     paths.includes("product-explorer") ||
     paths.includes("eu-careers") ||
     paths.includes("our-locations") ||
-    paths.includes("academy");
+    paths.includes("academy") ||
+    paths.includes("trading-specifications");
   if (has_language_in_url) {
     setLanguageCookie(first_path);
   }
