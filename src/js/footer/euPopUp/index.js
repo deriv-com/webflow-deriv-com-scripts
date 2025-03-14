@@ -1,16 +1,11 @@
-import { getCookieByKey, setCookie, getCookie } from "../cookies";
+import { getCookieByKey } from "../cookies";
 
 const modal = document.querySelector(".redirection_background-wrapper");
 const cancelRedirect = document.getElementById("cancel-redirect");
 const proceedRedirect = document.getElementById("proceed-redirect");
-const trackingStatusCookie = "tracking_status";
-const trackingStatusDeclineCookie = "tracking_status_decline";
 const hasDataLayer = window.dataLayer;
 const clientInformation = getCookieByKey(document.cookie, "client_information");
 const isLoggedIn = !!clientInformation;
-const acceptButton = document.getElementById("accept-cookie");
-const declineButton = document.getElementById("dont-accept-cookie");
-const popupElement = document.querySelector(".cookies_background-wrapper");
 
 document.addEventListener("DOMContentLoaded", () => {
   if (hasDataLayer) {
@@ -25,30 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }),
     });
   }
-
-  // Check if pathname contains "eu" and tracking_status cookies are not set
-  if (
-    window.location.pathname.includes("eu") &&
-    !getCookie(trackingStatusCookie) &&
-    !getCookie(trackingStatusDeclineCookie)
-  ) {
-    popupElement.classList.remove("hide-element");
-    document.body.classList.add("show-cookie");
-  }
-
-  // Event handlers for accept and decline buttons
-  acceptButton?.addEventListener("click", () => {
-    setCookie(trackingStatusCookie, true);
-    popupElement.classList.add("hide-element");
-    document.body.classList.remove("show-cookie");
-  });
-
-  declineButton?.addEventListener("click", () => {
-    setCookie(trackingStatusDeclineCookie, true);
-    setCookie(trackingStatusCookie, false);
-    popupElement.classList.add("hide-element");
-    document.body.classList.remove("show-cookie");
-  });
 });
 
 if (
