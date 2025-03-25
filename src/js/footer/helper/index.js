@@ -69,11 +69,11 @@ window.staging_url = "staging.deriv.com";
 window.staging_deriv_be_url = "staging.deriv.be";
 
 window.domain_list_app_id = {
-  [window.deriv_com_url]: "16929",
-  [window.deriv_me_url]: "1411",
-  [window.deriv_be_url]: "30767",
+  [window.deriv_com_url]: "61554",
+  [window.deriv_me_url]: "65205",
+  [window.deriv_be_url]: "65206",
   [window.webflow_domain]: "53503",
-  [window.staging_url]: "16303",
+  [window.staging_url]: "53503",
 };
 
 window.getDomain = () => {
