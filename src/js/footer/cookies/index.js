@@ -33,6 +33,7 @@ export function getCookieByKey(cookieString, key) {
 }
 export function setLanguageCookie(language) {
   setCookie("webflow-user-language", language, 30);
+  setCookie("webflow-user-language", language, 30, ".deriv.com");
 }
 export function deleteCookie(name) {
   document.cookie = name + "=; Max-Age=-99999999;";
