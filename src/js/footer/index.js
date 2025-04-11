@@ -18,6 +18,5 @@ import "./mobileMenuClassSetter";
 import "./removeHrefLang";
 import "./displayCurrentLang";
 import "./languageCookie";
-import "./p2pRedirection";
 import "./mobileMenuLanguageScroll";
 import "./signupRedirection";
