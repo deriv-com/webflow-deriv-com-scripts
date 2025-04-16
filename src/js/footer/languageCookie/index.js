@@ -1,4 +1,4 @@
-import { setCookie, getCookie } from "../cookies";
+import { getCookie, setLanguageCookie } from "../cookies";
 // Function for setting cookies when changing language and redirecting to the current language page
 let localeItems = document.querySelectorAll(".w-locales-items");
 
@@ -9,7 +9,7 @@ if (localeItems.length > 0) {
       link.addEventListener("click", function (event) {
         event.preventDefault();
         let language = link.getAttribute("hreflang");
-        setCookie("webflow-user-language", language, 30);
+        setLanguageCookie(language)
         window.location.href = link.href;
       });
     });
@@ -20,10 +20,6 @@ if (localeItems.length > 0) {
     if (link && window.location.pathname !== link.getAttribute("href")) {
       link.click();
     }
-  };
-
-  window.setLanguageCookie = (language) => {
-    setCookie("webflow-user-language", language, 30);
   };
 
   let languageCookie = getCookie("webflow-user-language");
