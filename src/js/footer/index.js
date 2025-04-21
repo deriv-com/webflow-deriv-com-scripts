@@ -20,3 +20,4 @@ import "./displayCurrentLang";
 import "./languageCookie";
 import "./mobileMenuLanguageScroll";
 import "./signupRedirection";
+import "./cashierRedirection";
