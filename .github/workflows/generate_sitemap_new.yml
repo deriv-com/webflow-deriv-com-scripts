@@ -1,0 +1,41 @@
+name: Generate and Upload Combined Sitemap
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate_combined_sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        shell: bash
+        run: npm install yargs xml2js
+
+      - name: Download sitemaps
+        shell: bash
+        run: |
+          mkdir -p temp
+          curl -o temp/staging_sitemap.xml https://staging.deriv.com/sitemap.xml
+          curl -o temp/academy_sitemap.xml https://academy-v2.webflow.io/sitemap.xml
+          curl -o temp/robots.txt https://staging.deriv.com/robots.txt
+
+      - name: Generate Combined Sitemap
+        uses: ./.github/actions/generate_sitemap_and_robots_new
+        with:
+          main_domain: "https://deriv.com"
+
+      - name: Upload to R2
+        uses: ./.github/actions/upload_to_r2
+        with:
+          r2_account_id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_bucket_name: ${{ secrets.R2_BUCKET_NAME }}
