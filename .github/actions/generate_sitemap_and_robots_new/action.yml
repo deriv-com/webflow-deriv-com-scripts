@@ -20,13 +20,16 @@ runs:
         node .github/modify_sitemap_new.js \
           --staging-sitemap temp/staging_sitemap.xml \
           --academy-sitemap temp/academy_sitemap.xml \
-          --output-file content/$domain_name/sitemap_new.xml \
+          --output-file content/$domain_name/sitemap.xml \
           --new-domain $domain_name
 
+        # Copy robots.txt and update it
+        cp temp/robots.txt content/$domain_name/robots.txt
+
         # Generate robots.txt
-        node .github/modify_robots_new.js \
-          --domain $domain_name \
-          --output-file content/$domain_name/robots_new.txt
+        node .github/modify_robots.js \
+          --sitemap-url $domain_name \
+          --input-file content/$domain_name/robots.txt
 
         # Clean up temp files
         rm -rf temp
