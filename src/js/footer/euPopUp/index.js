@@ -41,6 +41,7 @@ if (
     "signup.deriv.com",
     "login.deriv.com",
     "api.deriv.com",
+    "hub.deriv.com",
   ];
 
   let pendingRedirect = "";
