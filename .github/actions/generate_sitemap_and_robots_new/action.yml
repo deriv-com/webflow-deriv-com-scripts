@@ -24,7 +24,7 @@ runs:
           --new-domain $domain_name
 
         # Copy robots.txt and update it
-        cp temp/robots.txt content/$domain_name/robots.txt
+        cp temp/robots.txt content/$domain_name/robots_new.txt
 
         # Generate robots.txt
         node .github/modify_robots.js \
