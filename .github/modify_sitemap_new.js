@@ -2,7 +2,7 @@ const fs = require("fs");
 const yargs = require("yargs");
 const xml2js = require("xml2js");
 
-const argv = yargs()
+const argv = yargs
   .option("staging-sitemap", {
     alias: "s",
     description: "The staging sitemap file",
@@ -28,8 +28,7 @@ const argv = yargs()
     demandOption: true,
   })
   .help()
-  .alias("help", "h")
-  .parseSync();
+  .alias("help", "h").argv;
 
 const stagingSitemapFile = argv["staging-sitemap"];
 const academySitemapFile = argv["academy-sitemap"];

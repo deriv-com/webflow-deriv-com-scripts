@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: npm install yargs xml2js
+        run: npm install yargs@17.7.2 xml2js
 
       - name: Download sitemaps
         shell: bash
