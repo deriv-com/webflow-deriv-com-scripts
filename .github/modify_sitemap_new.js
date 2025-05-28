@@ -68,7 +68,7 @@ function filterAcademyUrls(stagingSitemap) {
     }
 
     const url = urlObj.loc[0];
-    return !url.includes("deriv.com/academy");
+    return !url.match(/deriv\.(com|be|me)\/academy/);
   });
 
   return stagingSitemap;
@@ -245,19 +245,19 @@ async function processSitemaps() {
     const stagingSitemap = await readAndParseXml(stagingSitemapFile);
     const academySitemap = await readAndParseXml(academySitemapFile);
 
-    console.log("Filtering academy URLs from staging sitemap...");
-    const filteredStagingSitemap = filterAcademyUrls(stagingSitemap);
-
     console.log("Replacing domains in sitemaps...");
-    const processedStagingSitemap = replaceDomains(
-      filteredStagingSitemap,
-      newDomain
+    const processedStagingSitemap = replaceDomains(stagingSitemap, newDomain);
+
+    console.log("Filtering academy URLs from staging sitemap...");
+    const filteredStagingSitemap = filterAcademyUrls(processedStagingSitemap);
+    const processedAcademySitemap = replaceDomains(
+      academySitemap,
+      `${newDomain}/academy`
     );
-    const processedAcademySitemap = replaceDomains(academySitemap, newDomain);
 
     console.log("Combining sitemaps...");
     const combinedSitemap = combineSitemaps(
-      processedStagingSitemap,
+      filteredStagingSitemap,
       processedAcademySitemap
     );
 
