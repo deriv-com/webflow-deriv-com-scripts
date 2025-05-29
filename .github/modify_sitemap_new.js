@@ -1,6 +1,7 @@
 const fs = require("fs");
 const yargs = require("yargs");
 const xml2js = require("xml2js");
+const _ = require("lodash");
 
 const argv = yargs
   .option("staging-sitemap", {
@@ -162,8 +163,9 @@ function filterExcludedUrls(sitemap, newDomain) {
 
   const excludedPatterns = ["/partners-help-centre-questions/"];
 
-  const locPattern = new RegExp(`https://${newDomain}\/[^\/]+\/locations`, "i");
-  const locDirectPattern = new RegExp(`https://${newDomain}\/locations\/`, "i");
+  const safeNewDomain = _.escapeRegExp(newDomain);
+  const locPattern = new RegExp(`https://${safeNewDomain}\/[^\/]+\/locations`, "i");
+  const locDirectPattern = new RegExp(`https://${safeNewDomain}\/locations\/`, "i");
 
   sitemap.urlset.url = sitemap.urlset.url.filter((urlObj) => {
     if (!urlObj.loc || urlObj.loc.length === 0) {
@@ -192,7 +194,7 @@ function filterExcludedUrls(sitemap, newDomain) {
     }
 
     // Check for EU URLs
-    if (new RegExp(`https://${newDomain}(\/[a-z-]{2,5})?\/eu(\/)?`).test(url)) {
+    if (new RegExp(`https://${safeNewDomain}(\/[a-z-]{2,5})?\/eu(\/)?`).test(url)) {
       return false;
     }
 
