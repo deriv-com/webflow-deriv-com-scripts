@@ -187,7 +187,8 @@ export const loginUrl = () => {
       featureFlag: "trigger_login_for_hub",
     });
     if (typeof window.isTHLogin === "boolean" && window.isTHLogin) {
-      if (window.location.href.includes("staging.deriv.com")) {
+      const urlHost = new URL(window.location.href).host;
+      if (urlHost === "staging.deriv.com") {
         appId = 53503;
         domainAppId = 53503;
       } else {
