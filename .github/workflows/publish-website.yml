@@ -86,7 +86,7 @@ jobs:
 
       - name: Install yargs
         shell: bash
-        run: npm install yargs
+        run: npm install yargs@17.7.2
 
       - name: Download sitemap.xml and robots.txt
         shell: bash
