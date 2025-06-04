@@ -159,13 +159,28 @@ function filterExcludedUrls(sitemap, newDomain) {
     "https://deriv.com/dynamic-trading-specifications",
     "https://deriv.com/locations/guernsey",
     "https://deriv.com/eu/locations/guernsey",
+    "https://deriv.com/derivlife-search",
+    "https://deriv.com/blog-search",
+    "https://deriv.com/derivtech-search",
+    "https://deriv.com/newsroom/newsroom-search",
+    "https://deriv.com/blog/posts/eur-usd-forecast-dollar-weakness",
+    "https://deriv.com/fr/blog/posts/price-weighted-vs-market-cap-weighted-indices",
   ];
 
-  const excludedPatterns = ["/partners-help-centre-questions/"];
+  const excludedPatterns = [
+    "/partners-help-centre-questions/",
+    "/blog-categories/press-releases-2",
+  ];
 
   const safeNewDomain = _.escapeRegExp(newDomain);
-  const locPattern = new RegExp(`https://${safeNewDomain}\/[^\/]+\/locations`, "i");
-  const locDirectPattern = new RegExp(`https://${safeNewDomain}\/locations\/`, "i");
+  const locPattern = new RegExp(
+    `https://${safeNewDomain}\/[^\/]+\/locations`,
+    "i"
+  );
+  const locDirectPattern = new RegExp(
+    `https://${safeNewDomain}\/locations\/`,
+    "i"
+  );
 
   sitemap.urlset.url = sitemap.urlset.url.filter((urlObj) => {
     if (!urlObj.loc || urlObj.loc.length === 0) {
@@ -194,7 +209,9 @@ function filterExcludedUrls(sitemap, newDomain) {
     }
 
     // Check for EU URLs
-    if (new RegExp(`https://${safeNewDomain}(\/[a-z-]{2,5})?\/eu(\/)?`).test(url)) {
+    if (
+      new RegExp(`https://${safeNewDomain}(\/[a-z-]{2,5})?\/eu(\/)?`).test(url)
+    ) {
       return false;
     }
 
