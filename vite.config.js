@@ -17,6 +17,7 @@ export default defineConfig({
           __dirname,
           "src/js/tradingCentral/index.js"
         ),
+        uae_scripts: resolve(__dirname, "src/js/uae/index.js"),
         styles: resolve(__dirname, "src/css/index.css"),
       },
       output: {
