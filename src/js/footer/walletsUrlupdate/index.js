@@ -1,38 +1,28 @@
 import { getCookieByKey } from "../cookies";
 
 // Gets the appropriate hub URL based on current hostname
-const getHubUrl = () => {
+const getWalletUrl = () => {
   const isStaging = window.location.hostname === "staging.deriv.com";
   return isStaging
-    ? "https://staging-hub.deriv.com/tradershub"
-    : "https://hub.deriv.com/tradershub";
+    ? "https://staging-hub.deriv.com/tradershub/wallets"
+    : "https://hub.deriv.com/tradershub/wallets";
 };
 
 /**
- * Base URL patterns for wallet redirection
- * Maps URL patterns to their corresponding wallet paths
+ * Gets the current environment's base domain
+ * @returns {string} Current domain (deriv.com or staging.deriv.com)
  */
-const URL_PATTERNS = {
-  "/cashier": "/wallets",
-  "/cashier/withdrawal": "/wallets/withdrawal",
-  "/cashier/account-transfer": "/wallets/transfer",
-  "/wallet/withdrawal": "/wallets/withdrawal",
+const getCurrentDomain = () => {
+  const hostname = window.location.hostname;
+  return hostname === "staging.deriv.com" ? "staging.deriv.com" : "deriv.com";
 };
-
-/**
- * Supported domains for wallet redirection
- */
-const SUPPORTED_DOMAINS = [
-  "https://deriv.com",
-  "https://staging.deriv.com",
-  "https://app.deriv.com",
-];
 
 /**
  * Cache for URL mappings to avoid recalculation
  */
 let cachedUrlMappings = null;
 let cachedHubUrl = null;
+let cachedDomain = null;
 
 /**
  * Gets URL mappings for wallet redirection based on current environment
@@ -40,27 +30,41 @@ let cachedHubUrl = null;
  * @returns {Object} URL mappings object
  */
 const getUrlMappings = () => {
-  const currentHubUrl = getHubUrl();
+  const currentWalletUrl = getWalletUrl();
+  const currentDomain = getCurrentDomain();
 
-  // Return cached mappings if hub URL hasn't changed
-  if (cachedUrlMappings && cachedHubUrl === currentHubUrl) {
+  // Return cached mappings if hub URL and domain haven't changed
+  if (
+    cachedUrlMappings &&
+    cachedHubUrl === currentWalletUrl &&
+    cachedDomain === currentDomain
+  ) {
     return cachedUrlMappings;
   }
 
-  // Generate new mappings
-  const mappings = {};
+  // Generate mappings based on current environment
+  // All URLs redirect to the hub matching the current environment
+  const mappings = {
+    // deriv.com URLs (redirect to current environment's hub)
+    "https://deriv.com/cashier": currentWalletUrl,
+    "https://deriv.com/cashier/withdrawal": `${currentWalletUrl}/withdrawal`,
+    "https://deriv.com/cashier/account-transfer": `${currentWalletUrl}/transfer`,
 
-  SUPPORTED_DOMAINS.forEach((domain) => {
-    Object.entries(URL_PATTERNS).forEach(([oldPath, newPath]) => {
-      const oldUrl = `${domain}${oldPath}`;
-      const newUrl = `${currentHubUrl}${newPath}`;
-      mappings[oldUrl] = newUrl;
-    });
-  });
+    // staging.deriv.com URLs (redirect to current environment's hub)
+    "https://staging.deriv.com/cashier": currentWalletUrl,
+    "https://staging.deriv.com/cashier/withdrawal": `${currentWalletUrl}/withdrawal`,
+    "https://staging.deriv.com/cashier/account-transfer": `${currentWalletUrl}/transfer`,
+
+    // app.deriv.com URLs (redirect to current environment's hub)
+    "https://app.deriv.com/cashier": currentWalletUrl,
+    "https://app.deriv.com/wallet/withdrawal": `${currentWalletUrl}/withdrawal`,
+    "https://app.deriv.com/cashier/account-transfer": `${currentWalletUrl}/transfer`,
+  };
 
   // Cache the results
   cachedUrlMappings = mappings;
-  cachedHubUrl = currentHubUrl;
+  cachedHubUrl = currentWalletUrl;
+  cachedDomain = currentDomain;
 
   return mappings;
 };
