@@ -1,19 +1,68 @@
 import { getCookieByKey } from "../cookies";
 
+// Gets the appropriate hub URL based on current hostname
+const getHubUrl = () => {
+  const isStaging = window.location.hostname === "staging.deriv.com";
+  return isStaging
+    ? "https://staging-hub.deriv.com/tradershub"
+    : "https://hub.deriv.com/tradershub";
+};
+
 /**
- * URL mappings for wallet redirection
- * Maps old URLs to new hub.deriv.com URLs
+ * Base URL patterns for wallet redirection
+ * Maps URL patterns to their corresponding wallet paths
  */
-const URL_MAPPINGS = {
-  "https://deriv.com/cashier": "https://hub.deriv.com/tradershub/wallets",
-  "https://app.deriv.com/wallet/withdrawal":
-    "https://hub.deriv.com/tradershub/wallets/withdrawal",
-  "https://deriv.com/cashier/withdrawal":
-    "https://hub.deriv.com/tradershub/wallets/withdrawal",
-  "https://deriv.com/cashier/account-transfer":
-    "https://hub.deriv.com/tradershub/wallets/transfer",
-  "https://app.deriv.com/cashier/account-transfer":
-    "https://hub.deriv.com/tradershub/wallets/transfer",
+const URL_PATTERNS = {
+  "/cashier": "/wallets",
+  "/cashier/withdrawal": "/wallets/withdrawal",
+  "/cashier/account-transfer": "/wallets/transfer",
+  "/wallet/withdrawal": "/wallets/withdrawal",
+};
+
+/**
+ * Supported domains for wallet redirection
+ */
+const SUPPORTED_DOMAINS = [
+  "https://deriv.com",
+  "https://staging.deriv.com",
+  "https://app.deriv.com",
+];
+
+/**
+ * Cache for URL mappings to avoid recalculation
+ */
+let cachedUrlMappings = null;
+let cachedHubUrl = null;
+
+/**
+ * Gets URL mappings for wallet redirection based on current environment
+ * Uses caching to improve performance
+ * @returns {Object} URL mappings object
+ */
+const getUrlMappings = () => {
+  const currentHubUrl = getHubUrl();
+
+  // Return cached mappings if hub URL hasn't changed
+  if (cachedUrlMappings && cachedHubUrl === currentHubUrl) {
+    return cachedUrlMappings;
+  }
+
+  // Generate new mappings
+  const mappings = {};
+
+  SUPPORTED_DOMAINS.forEach((domain) => {
+    Object.entries(URL_PATTERNS).forEach(([oldPath, newPath]) => {
+      const oldUrl = `${domain}${oldPath}`;
+      const newUrl = `${currentHubUrl}${newPath}`;
+      mappings[oldUrl] = newUrl;
+    });
+  });
+
+  // Cache the results
+  cachedUrlMappings = mappings;
+  cachedHubUrl = currentHubUrl;
+
+  return mappings;
 };
 
 // Checks if wallet redirection should be applied
@@ -40,15 +89,17 @@ const shouldApplyWalletRedirection = () => {
   }
 };
 
-
 // Updates a link's href if it matches any URL mapping
 const updateLinkIfMatched = (link) => {
   try {
     const href = link.getAttribute("href");
     if (!href) return;
 
+    // Get current URL mappings based on environment
+    const urlMappings = getUrlMappings();
+
     // Find matching URL mapping
-    const matchedMapping = Object.entries(URL_MAPPINGS).find(([oldUrl]) =>
+    const matchedMapping = Object.entries(urlMappings).find(([oldUrl]) =>
       href.startsWith(oldUrl)
     );
 
