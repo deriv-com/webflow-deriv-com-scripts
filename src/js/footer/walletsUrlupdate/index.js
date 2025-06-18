@@ -16,7 +16,6 @@ const URL_MAPPINGS = {
     "https://hub.deriv.com/tradershub/wallets/transfer",
 };
 
-
 // Checks if wallet redirection should be applied
 const shouldApplyWalletRedirection = () => {
   try {
@@ -25,11 +24,15 @@ const shouldApplyWalletRedirection = () => {
       "client_information"
     );
     const walletAccount = getCookieByKey(document.cookie, "wallet_account");
+    const currentDomain = window.location.hostname
+      .split(".")
+      .slice(-2)
+      .join(".");
 
     return (
       clientInformation &&
       walletAccount === "true" &&
-      window.location.hostname === "deriv.com"
+      currentDomain === "deriv.com"
     );
   } catch (error) {
     console.warn("Error checking wallet redirection conditions:", error);
