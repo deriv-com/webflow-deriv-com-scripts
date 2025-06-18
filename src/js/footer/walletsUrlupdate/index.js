@@ -24,11 +24,11 @@ const shouldApplyWalletRedirection = () => {
       document.cookie,
       "client_information"
     );
-    const walletsAccount = getCookieByKey(document.cookie, "wallets_account");
+    const walletAccount = getCookieByKey(document.cookie, "wallet_account");
 
     return (
       clientInformation &&
-      walletsAccount === "true" &&
+      walletAccount === "true" &&
       window.location.hostname === "deriv.com"
     );
   } catch (error) {
