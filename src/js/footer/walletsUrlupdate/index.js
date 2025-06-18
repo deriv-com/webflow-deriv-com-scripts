@@ -102,8 +102,13 @@ const updateLinkIfMatched = (link) => {
     // Get current URL mappings based on environment
     const urlMappings = getUrlMappings();
 
-    // Find matching URL mapping
-    const matchedMapping = Object.entries(urlMappings).find(([oldUrl]) =>
+    // Sort mappings by URL length (longest first) to ensure most specific match
+    const sortedMappings = Object.entries(urlMappings).sort(
+      ([a], [b]) => b.length - a.length
+    );
+
+    // Find the most specific matching URL mapping
+    const matchedMapping = sortedMappings.find(([oldUrl]) =>
       href.startsWith(oldUrl)
     );
 
