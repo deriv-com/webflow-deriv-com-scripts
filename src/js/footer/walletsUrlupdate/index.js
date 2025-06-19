@@ -47,6 +47,7 @@ const getUrlMappings = () => {
   const mappings = {
     // deriv.com URLs (redirect to current environment's hub)
     "https://deriv.com/cashier": currentWalletUrl,
+    "/cashier/withdrawal": `${currentWalletUrl}/withdrawal`,
     "https://deriv.com/cashier/withdrawal": `${currentWalletUrl}/withdrawal`,
     "https://deriv.com/cashier/account-transfer": `${currentWalletUrl}/transfer`,
 
