@@ -165,6 +165,7 @@ function filterExcludedUrls(sitemap, newDomain) {
     "https://deriv.com/newsroom/newsroom-search",
     "https://deriv.com/blog/posts/eur-usd-forecast-dollar-weakness",
     "https://deriv.com/fr/blog/posts/price-weighted-vs-market-cap-weighted-indices",
+    "https://deriv.com/fr/blog/posts/5-strategies-to-balance-risk-and-reward-in-trading",
   ];
 
   const excludedPatterns = [
