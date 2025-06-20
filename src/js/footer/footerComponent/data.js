@@ -234,9 +234,9 @@ export const hideElems = [
   {
     id: "p2p",
     selectors: [
-      "#p2payment.accordion_toggle-block",
-      "#p2component.section_dp2p",
-      "#card_block_p2p.help_category",
+      "#p2payment.accordion_toggle-block", //in payment-methods page
+      "#p2component.section_dp2p", //in payment-methods page
+      "#card_block_p2p.help_category", //in help-centre, platforms tab
     ],
     countries: [
       "as",
@@ -270,7 +270,6 @@ export const hideElems = [
       "lv",
       "lt",
       "lu",
-      "my",
       "mt",
       "nl",
       "nz",
@@ -285,7 +284,6 @@ export const hideElems = [
       "si",
       "es",
       "se",
-      "ae",
       "gb",
       "us",
       "um",
