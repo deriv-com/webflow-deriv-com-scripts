@@ -19,6 +19,10 @@ const argv = yargs
 
 const newDomain = argv["new-domain"];
 const inputFile = argv["input-file"];
+
+// Escape special regex characters in the domain
+const escapedDomain = newDomain.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 fs.readFile(inputFile, "utf8", (err, data) => {
   if (err) {
     console.error("Error reading the file:", err);
@@ -33,8 +37,14 @@ fs.readFile(inputFile, "utf8", (err, data) => {
     /(<xhtml:link[^>]*?href="https:\/\/[^\/]+\/[^\/]+\/locations[^"]*"[^>]*?>)/g;
   const linkPattern =
     /(<xhtml:link[^>]*?href="https:\/\/[^\/]+\/[^\/]+[^"]*"[^>]*?>)/g;
-  const locPattern = new RegExp(`https://${newDomain}\/[^\/]+\/locations`, "i");
-  const locDirectPattern = new RegExp(`https://${newDomain}\/locations\/`, "i");
+  const locPattern = new RegExp(
+    `https://${escapedDomain}\/[^\/]+\/locations`,
+    "i"
+  );
+  const locDirectPattern = new RegExp(
+    `https://${escapedDomain}\/locations\/`,
+    "i"
+  );
 
   const staticDocUrls = [
     "https://deriv.com/signup",
@@ -58,13 +68,11 @@ fs.readFile(inputFile, "utf8", (err, data) => {
     "https://deriv.com/eu/locations/guernsey",
   ];
 
-  const excludedPatterns = [
-    "/partners-help-centre-questions/",
-  ];
+  const excludedPatterns = ["/partners-help-centre-questions/"];
 
   let filteredContent = newContent.replace(urlBlockPattern, (match) => {
     // Check for excluded patterns
-    if (excludedPatterns.some(pattern => match.includes(pattern))) {
+    if (excludedPatterns.some((pattern) => match.includes(pattern))) {
       return "";
     }
 

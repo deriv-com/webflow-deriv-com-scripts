@@ -3,6 +3,9 @@ name: Generate and Upload sitemap and robots
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate_sitemap_and_robots:
     runs-on: ubuntu-latest

@@ -12,6 +12,10 @@ on:
         description: "Production"
         default: false
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   publish_site:
     runs-on: ubuntu-latest
