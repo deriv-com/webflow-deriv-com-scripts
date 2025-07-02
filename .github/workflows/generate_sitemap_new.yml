@@ -3,6 +3,9 @@ name: Generate and Upload Combined Sitemap
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate_combined_sitemap:
     runs-on: ubuntu-latest
