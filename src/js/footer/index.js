@@ -22,3 +22,4 @@ import "./mobileMenuLanguageScroll";
 import "./signupRedirection";
 import "./cashierRedirection";
 import "./walletsUrlupdate";
+import "./uaeRedirection";
