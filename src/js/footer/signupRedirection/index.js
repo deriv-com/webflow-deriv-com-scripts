@@ -36,13 +36,28 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   };
 
+  const hostnameMap = {
+    "staging.deriv.com": {
+      selectorUrl: "https://staging.deriv.com",
+      replaceUrl: "https://staging-hub.deriv.com",
+    },
+    "deriv.com": {
+      selectorUrl: "https://deriv.com",
+      replaceUrl: "https://hub.deriv.com",
+    },
+    "deriv.be": {
+      selectorUrl: "https://deriv.be",
+      replaceUrl: "https://hub.deriv.be",
+    },
+    "deriv.me": {
+      selectorUrl: "https://deriv.me",
+      replaceUrl: "https://hub.deriv.me",
+    },
+  };
+
   const hostname = window.location.hostname;
-  if (hostname === "deriv.com") {
-    updateSignupLinks("https://deriv.com", "https://hub.deriv.com");
-  } else if (hostname === "staging.deriv.com") {
-    updateSignupLinks(
-      "https://staging.deriv.com",
-      "https://staging-hub.deriv.com"
-    );
+  const mapping = hostnameMap[hostname];
+  if (mapping) {
+    updateSignupLinks(mapping.selectorUrl, mapping.replaceUrl);
   }
 });

@@ -20,5 +20,6 @@ import "./displayCurrentLang";
 import "./languageCookie";
 import "./mobileMenuLanguageScroll";
 import "./signupRedirection";
+import "./partnerRedirection";
 import "./cashierRedirection";
 import "./walletsUrlupdate";
