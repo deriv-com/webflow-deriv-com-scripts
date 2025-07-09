@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const getPartnersHubUrl = (baseDomain) => {
+  const hostname = window.location.hostname;
+  const baseDomain = hostname.split(".").slice(-2).join(".");
+
+  const getPartnersHubUrl = () => {
     return `https://hub.${baseDomain}/partnershub/`;
   };
 
   const updatePartnerLoginLinks = () => {
-    const hostname = window.location.hostname;
-    const baseDomain = hostname.split(".").slice(-2).join(".");
-    const partnersHubUrl = getPartnersHubUrl(baseDomain);
+    const partnersHubUrl = getPartnersHubUrl();
 
     document
       .querySelectorAll('a[href^="https://login.deriv."]')
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
 
-  const updatePartnerSignupLinks = (baseDomain) => {
+  const updatePartnerSignupLinks = () => {
     let signupUrl = `https://hub.deriv.com/partnershub/signup`;
     if (baseDomain === "deriv.me") {
       signupUrl = `https://hub.deriv.me/partnershub/signup`;
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const client_country = window?.getClientCountry?.();
     if (client_country) {
       updatePartnerLoginLinks();
-      updatePartnerSignupLinks(baseDomain);
+      updatePartnerSignupLinks();
       clearInterval(intervalId);
     }
   }, 300);
