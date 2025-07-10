@@ -85,7 +85,9 @@ if (
         target.closest(".blogs_prev-button") ||
         target.closest(".blogs_next-button")
       ) {
-        attachRedirectListeners();
+        setTimeout(() => {
+          attachRedirectListeners();
+        }, 300);
       }
     });
   }
