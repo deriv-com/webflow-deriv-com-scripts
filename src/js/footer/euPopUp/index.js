@@ -47,48 +47,22 @@ if (
   let pendingRedirect = "";
   let currentTarget = "_self";
 
-  function attachRedirectListeners() {
-    document.querySelectorAll("a").forEach(function (anchor) {
-      const anchorUrl = new URL(anchor.href, window.location.href);
-      const currentUrl = new URL(window.location.href);
-      if (
-        !internalDomains.includes(anchorUrl.host) &&
-        anchorUrl.host !== currentUrl.host
-      ) {
-        // Remove any previous handler to avoid duplicates
-        anchor.removeEventListener("click", handleRedirectClick);
-        anchor.addEventListener("click", handleRedirectClick);
-      }
-    });
-  }
-
-  function handleRedirectClick(event) {
-    event.preventDefault();
-    pendingRedirect = this.href;
-    currentTarget = this.target || "_self";
-    modal.classList.remove("hide-element");
-    document.body.style.overflow = "hidden";
-  }
-
-  // On page load
-  attachRedirectListeners();
-
-  // Listen for Finsweet pagination events
-  const paginationWrapper = document.querySelector(".w-pagination-wrapper");
-
-  if (paginationWrapper) {
-    paginationWrapper.addEventListener("click", (event) => {
-      const target = event.target;
-
-      if (
-        target.closest(".blogs_page") ||
-        target.closest(".blogs_prev-button") ||
-        target.closest(".blogs_next-button")
-      ) {
-        attachRedirectListeners();
-      }
-    });
-  }
+  document.querySelectorAll("a").forEach(function (anchor) {
+    const anchorUrl = new URL(anchor.href, window.location.href);
+    const currentUrl = new URL(window.location.href);
+    if (
+      !internalDomains.includes(anchorUrl.host) &&
+      anchorUrl.host !== currentUrl.host
+    ) {
+      anchor.addEventListener("click", function (event) {
+        event.preventDefault();
+        pendingRedirect = anchorUrl.href;
+        currentTarget = anchor.target || "_self";
+        modal.classList.remove("hide-element");
+        document.body.style.overflow = "hidden";
+      });
+    }
+  });
 
   cancelRedirect.addEventListener("click", function () {
     modal.classList.add("hide-element");
