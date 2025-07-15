@@ -23,6 +23,6 @@ runs:
         r2-access-key-id: ${{ inputs.r2_access_key_id }}
         r2-secret-access-key: ${{ inputs.r2_secret_access_key }}
         r2-bucket: ${{ inputs.r2_bucket_name }}
-        source-dir: content/${{ inputs.r2_bucket_name }}
+        source-dir: content/deriv.com
         destination-dir: .
         custom-charset: "UTF-8"
