@@ -309,13 +309,20 @@ async function processSitemaps() {
     const builder = new xml2js.Builder({
       renderOpts: {
         pretty: true,
-        indent: "  ",
+        indent: "    ", // Use 4 spaces for indentation to match original format
         newline: "\n",
       },
       xmldec: { version: "1.0", encoding: "UTF-8" },
     });
 
-    const xml = builder.buildObject(finalSitemap);
+    let xml = builder.buildObject(finalSitemap);
+
+    // Additional formatting to match the original sitemap format
+    // Add line breaks around <loc> tags
+    xml = xml.replace(
+      /<loc>([^<]+)<\/loc>/g,
+      "<loc>\n            $1\n        </loc>"
+    );
 
     fs.writeFile(outputFile, xml, "utf8", (err) => {
       if (err) {
