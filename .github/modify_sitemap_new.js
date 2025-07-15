@@ -324,6 +324,20 @@ async function processSitemaps() {
       "<loc>\n            $1\n        </loc>"
     );
 
+    // Ensure the closing urlset tag is properly formatted
+    if (!xml.endsWith("</urlset>")) {
+      if (xml.endsWith("</urlset")) {
+        xml += ">";
+      } else {
+        xml += "\n</urlset>";
+      }
+    }
+
+    // Ensure there's a newline at the end of the file
+    if (!xml.endsWith("\n")) {
+      xml += "\n";
+    }
+
     fs.writeFile(outputFile, xml, "utf8", (err) => {
       if (err) {
         console.error("Error writing output file:", err);

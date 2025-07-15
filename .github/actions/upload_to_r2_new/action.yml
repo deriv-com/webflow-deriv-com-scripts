@@ -26,3 +26,8 @@ runs:
         source-dir: content/deriv.com
         destination-dir: .
         custom-charset: "UTF-8"
+        content-type: |
+          {
+            "sitemap_new.xml": "application/xml",
+            "robots_new.txt": "text/plain"
+          }
