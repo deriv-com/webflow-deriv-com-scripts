@@ -20,7 +20,10 @@ function updateSitemap(inputFile, newSitemapUrl) {
         data + `\nSitemap: https://seo.deriv.com/${newSitemapUrl}/sitemap.xml`;
     }
     if (data.match(/^Host:/m)) {
-      newContent = newContent.replace(/^Host: .*/m, `Host: https://${newSitemapUrl}`);
+      newContent = newContent.replace(
+        /^Host: .*/m,
+        `Host: https://${newSitemapUrl}`
+      );
     }
     fs.writeFile(inputFile, newContent, "utf8", (err) => {
       if (err) {
@@ -47,10 +50,7 @@ const argv = yargs
   })
   .help()
   .alias("help", "h").argv;
-if (process.argv.length !== 6) {
-  console.error("Usage: node update_robots.js <robots_url> <new_sitemap_url>");
-  process.exit(1);
-}
+// Remove the incorrect argument length check since we're using yargs
 const inputFile = argv["input-file"];
 const newSitemapUrl = argv["sitemap-url"];
 updateSitemap(inputFile, newSitemapUrl);
