@@ -32,7 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href === `${selectorUrl}/${current_language}/landing/signup`
     );
     links.forEach((link) => {
-      link.href = `${replaceUrl}/tradershub/signup?lang=${current_language}`;
+      let language = current_language;
+      if (language === "zh-tw") language = "zh_tw";
+      if (language === "zh-cn") language = "zh_cn";
+      link.href = `${replaceUrl}/tradershub/signup?lang=${language}`;
     });
   };
 
