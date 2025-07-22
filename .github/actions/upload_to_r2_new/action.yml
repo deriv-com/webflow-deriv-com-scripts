@@ -1,0 +1,33 @@
+name: "Upload to R2"
+description: "Upload files to R2 bucket"
+inputs:
+  r2_account_id:
+    description: "R2 Account ID"
+    required: true
+  r2_access_key_id:
+    description: "R2 Access Key ID"
+    required: true
+  r2_secret_access_key:
+    description: "R2 Secret Access Key"
+    required: true
+  r2_bucket_name:
+    description: "R2 Bucket Name"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: R2 Upload Action to upload files to Cloudflare
+      uses: ryand56/r2-upload-action@latest
+      with:
+        r2-account-id: ${{ inputs.r2_account_id }}
+        r2-access-key-id: ${{ inputs.r2_access_key_id }}
+        r2-secret-access-key: ${{ inputs.r2_secret_access_key }}
+        r2-bucket: ${{ inputs.r2_bucket_name }}
+        source-dir: content/deriv.com
+        destination-dir: .
+        custom-charset: "UTF-8"
+        content-type: |
+          {
+            "sitemap_new.xml": "application/xml",
+            "robots_new.txt": "text/plain"
+          }

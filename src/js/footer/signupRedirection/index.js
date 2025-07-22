@@ -32,8 +32,30 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href === `${selectorUrl}/${current_language}/landing/signup`
     );
     links.forEach((link) => {
-      link.href = `${replaceUrl}/tradershub/signup?lang=${current_language}`;
+      let language = current_language;
+      if (language === "zh-tw") language = "zh_tw";
+      if (language === "zh-cn") language = "zh_cn";
+      link.href = `${replaceUrl}/tradershub/signup?lang=${language}`;
     });
+  };
+
+  const hostnameMap = {
+    "staging.deriv.com": {
+      selectorUrl: "https://staging.deriv.com",
+      replaceUrl: "https://staging-hub.deriv.com",
+    },
+    "deriv.com": {
+      selectorUrl: "https://deriv.com",
+      replaceUrl: "https://hub.deriv.com",
+    },
+    "deriv.be": {
+      selectorUrl: "https://deriv.be",
+      replaceUrl: "https://hub.deriv.be",
+    },
+    "deriv.me": {
+      selectorUrl: "https://deriv.me",
+      replaceUrl: "https://hub.deriv.me",
+    },
   };
 
   const hostname = window.location.hostname;

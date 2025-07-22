@@ -3,9 +3,9 @@
   overflow: hidden;
 }
 /* removing scroll bar(vertical) */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 @media (min-width: 992px) and (max-width: 1200px) {
   .new-navbar_menu-left-desctop {
@@ -44,7 +44,7 @@
 }
 
 * {
-  scrollbar-width: none;
+  scrollbar-width: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -o-font-smoothing: antialiased;

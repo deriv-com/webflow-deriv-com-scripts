@@ -309,13 +309,34 @@ async function processSitemaps() {
     const builder = new xml2js.Builder({
       renderOpts: {
         pretty: true,
-        indent: "  ",
+        indent: "    ", // Use 4 spaces for indentation to match original format
         newline: "\n",
       },
       xmldec: { version: "1.0", encoding: "UTF-8" },
     });
 
-    const xml = builder.buildObject(finalSitemap);
+    let xml = builder.buildObject(finalSitemap);
+
+    // Additional formatting to match the original sitemap format
+    // Add line breaks around <loc> tags
+    xml = xml.replace(
+      /<loc>([^<]+)<\/loc>/g,
+      "<loc>\n            $1\n        </loc>"
+    );
+
+    // Ensure the closing urlset tag is properly formatted
+    if (!xml.endsWith("</urlset>")) {
+      if (xml.endsWith("</urlset")) {
+        xml += ">";
+      } else {
+        xml += "\n</urlset>";
+      }
+    }
+
+    // Ensure there's a newline at the end of the file
+    if (!xml.endsWith("\n")) {
+      xml += "\n";
+    }
 
     fs.writeFile(outputFile, xml, "utf8", (err) => {
       if (err) {
