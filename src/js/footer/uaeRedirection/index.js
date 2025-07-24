@@ -1,3 +1,5 @@
+import { getCookie } from "../cookies";
+
 const baseDomains = ["https://deriv.com", "https://staging.deriv.com"];
 
 const restrictedPaths = [
@@ -73,6 +75,8 @@ function isUaeRestrictedPage() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  const isInternalUser = getCookie("internal");
+  if (isInternalUser === "true") return;
   const geomodalBg = document.querySelector("#geomodal");
   const intervalId = setInterval(() => {
     const clientsCountry = window.getClientCountry();
