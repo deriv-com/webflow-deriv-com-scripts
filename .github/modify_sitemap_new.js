@@ -75,6 +75,34 @@ function filterAcademyUrls(stagingSitemap) {
   return stagingSitemap;
 }
 
+// Function to filter out URLs with '/ae/' or '/ae' in academySitemap
+function filterAeUrls(sitemap) {
+  if (!sitemap.urlset || !sitemap.urlset.url) {
+    return sitemap;
+  }
+
+  sitemap.urlset.url = sitemap.urlset.url.filter((urlObj) => {
+    if (!urlObj.loc || urlObj.loc.length === 0) {
+      return true;
+    }
+
+    const url = urlObj.loc[0];
+
+    // Check for various patterns of '/ae' in the URL
+    if (url.includes("/ae/")) return false; // URLs containing /ae/ anywhere
+    if (url.endsWith("/ae")) return false; // URLs ending with /ae
+    if (url.endsWith("/ae/")) return false; // URLs ending with /ae/
+
+    // Check for /ae as a path segment (e.g., /academy/ae or /academy/ae/)
+    const urlParts = new URL(url).pathname.split("/");
+    if (urlParts.includes("ae")) return false;
+
+    return true;
+  });
+
+  return sitemap;
+}
+
 // Function to replace domains in sitemap
 function replaceDomains(sitemap, newDomain) {
   if (!sitemap.urlset || !sitemap.urlset.url) {
@@ -270,8 +298,14 @@ async function processSitemaps() {
 
     console.log("Filtering academy URLs from staging sitemap...");
     const filteredStagingSitemap = filterAcademyUrls(processedStagingSitemap);
+
+    console.log(
+      "Filtering out URLs containing '/ae' path segment from academy sitemap..."
+    );
+    const filteredAcademySitemap = filterAeUrls(academySitemap);
+
     const processedAcademySitemap = replaceDomains(
-      academySitemap,
+      filteredAcademySitemap,
       `${newDomain}/academy`
     );
 
