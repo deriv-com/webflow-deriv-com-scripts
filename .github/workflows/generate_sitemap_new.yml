@@ -36,7 +36,7 @@ jobs:
           main_domain: "https://deriv.com"
 
       - name: Upload to R2
-        uses: ./.github/actions/upload_to_r2_new
+        uses: ./.github/actions/upload_to_r2
         with:
           r2_account_id: ${{ secrets.R2_ACCOUNT_ID }}
           r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
