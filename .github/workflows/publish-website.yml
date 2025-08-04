@@ -40,7 +40,7 @@ jobs:
           deriv_me_site_id: ${{ secrets.DERIV_ME_SITE_ID }}
           deriv_be_site_id: ${{ secrets.DERIV_BE_SITE_ID }}
           webflow_general_site_id: ${{ secrets.WEBFLOW_GENERAL_SITE_ID }}
-      
+
       # Trigger DR workflow only on production release.
       - name: Trigger DR Workflow
         if: ${{ github.event.inputs.production_release == 'true' }}
@@ -90,17 +90,18 @@ jobs:
 
       - name: Install yargs
         shell: bash
-        run: npm install yargs@17.7.2
+        run: npm install yargs@17.7.2 xml2js
 
-      - name: Download sitemap.xml and robots.txt
+      - name: Download sitemaps and and robots.txt
         shell: bash
-        env:
-          BASE_DOMAIN: "https://staging.deriv.com"
         run: |
-          curl -O $BASE_DOMAIN/sitemap.xml -O $BASE_DOMAIN/robots.txt
+          mkdir -p temp
+          curl -o temp/staging_sitemap.xml https://staging.deriv.com/sitemap.xml || exit 1
+          curl -o temp/academy_sitemap.xml https://academy-v2.webflow.io/sitemap.xml || exit 1
+          curl -o temp/robots.txt https://staging.deriv.com/robots.txt || exit 1
 
-      - name: Generate Sitemap and Robots.txt
-        uses: ./.github/actions/generate_sitemap_and_robots
+      - name: Generate Combined Sitemap
+        uses: ./.github/actions/generate_sitemap_and_robots_new
         with:
           main_domain: "https://deriv.com"
 
