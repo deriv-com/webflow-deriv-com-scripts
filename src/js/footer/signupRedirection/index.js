@@ -59,12 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const hostname = window.location.hostname;
-  if (hostname === "deriv.com") {
-    updateSignupLinks("https://deriv.com", "https://hub.deriv.com");
-  } else if (hostname === "staging.deriv.com") {
-    updateSignupLinks(
-      "https://staging.deriv.com",
-      "https://staging-hub.deriv.com"
-    );
+  const mapping = hostnameMap[hostname];
+  if (mapping) {
+    updateSignupLinks(mapping.selectorUrl, mapping.replaceUrl);
   }
 });
