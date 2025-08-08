@@ -88,19 +88,20 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install yargs
+      - name: Install yargs and xml2js
         shell: bash
-        run: npm install yargs@17.7.2
+        run: npm install yargs@17.7.2 xml2js
 
-      - name: Download sitemap.xml and robots.txt
+      - name: Download sitemaps and robots.txt
         shell: bash
-        env:
-          BASE_DOMAIN: "https://staging.deriv.com"
         run: |
-          curl -O $BASE_DOMAIN/sitemap.xml -O $BASE_DOMAIN/robots.txt
+          mkdir -p temp
+          curl -o temp/staging_sitemap.xml https://staging.deriv.com/sitemap.xml || exit 1
+          curl -o temp/academy_sitemap.xml https://academy-v2.webflow.io/sitemap.xml || exit 1
+          curl -o temp/robots.txt https://staging.deriv.com/robots.txt || exit 1
 
-      - name: Generate Sitemap and Robots.txt
-        uses: ./.github/actions/generate_sitemap_and_robots
+      - name: Generate Combined Sitemap
+        uses: ./.github/actions/generate_sitemap_and_robots_new
         with:
           main_domain: "https://deriv.com"
 
