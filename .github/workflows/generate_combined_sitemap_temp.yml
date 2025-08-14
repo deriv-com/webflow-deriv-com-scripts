@@ -31,7 +31,7 @@ jobs:
           curl -o temp/robots.txt https://staging.deriv.com/robots.txt || exit 1
 
       - name: Generate Combined Sitemap
-        uses: ./.github/actions/generate_sitemap_and_robots_new
+        uses: ./.github/actions/generate_sitemap_and_robots_temp
         with:
           main_domain: "https://deriv.com"
 
