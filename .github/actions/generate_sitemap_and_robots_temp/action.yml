@@ -17,7 +17,7 @@ runs:
         mkdir -p content/$domain_name
 
         # Process and combine sitemaps
-        node .github/modify_sitemap_new.js \
+        node .github/modify_sitemap_temp.js \
           --staging-sitemap temp/staging_sitemap.xml \
           --academy-sitemap temp/academy_sitemap.xml \
           --output-file content/$domain_name/sitemap_temp.xml \
