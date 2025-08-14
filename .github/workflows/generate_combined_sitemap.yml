@@ -1,4 +1,4 @@
-name: Generate and Upload Combined Sitemap
+name: New Combined Sitemap Generation
 
 on:
   workflow_dispatch:

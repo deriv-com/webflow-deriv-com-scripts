@@ -1,4 +1,4 @@
-name: Generate and Upload sitemap and robots
+name: Old deriv-com only sitemap generation
 
 on:
   workflow_dispatch:
