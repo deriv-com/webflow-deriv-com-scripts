@@ -45,9 +45,115 @@ async function readAndParseXml(filePath) {
         return;
       }
 
-      const parser = new xml2js.Parser();
-      parser.parseString(data, (err, result) => {
+      // Clean up common XML issues before parsing
+      let cleanedData = data;
+
+      // Fix common XML entity issues
+      // Replace unescaped & characters that are not part of valid entities
+      cleanedData = cleanedData.replace(/&(?![a-zA-Z0-9#]{1,7};)/g, "&amp;");
+
+      // Fix any malformed entities
+      cleanedData = cleanedData.replace(/&([^;]*);/g, (match, entity) => {
+        // Check if it's a valid XML entity
+        const validEntities = ["amp", "lt", "gt", "quot", "apos"];
+        const numericEntity =
+          /^#\d+$/.test(entity) || /^#x[0-9a-fA-F]+$/.test(entity);
+
+        if (validEntities.includes(entity) || numericEntity) {
+          return match; // Keep valid entities
+        }
+
+        // For invalid entities, escape the ampersand
+        return "&amp;" + entity + ";";
+      });
+
+      // Remove any control characters that might cause issues
+      cleanedData = cleanedData.replace(
+        /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,
+        ""
+      );
+
+      const parser = new xml2js.Parser({
+        // Add options to be more lenient with XML parsing
+        trim: true,
+        normalize: true,
+        explicitArray: true,
+        mergeAttrs: false,
+      });
+
+      parser.parseString(cleanedData, (err, result) => {
         if (err) {
+          console.error(`Detailed XML parsing error for ${filePath}:`);
+          console.error(`Error: ${err.message}`);
+
+          // Try to show the problematic line if possible
+          if (err.message.includes("Line:")) {
+            const lines = cleanedData.split("\n");
+            const lineMatch = err.message.match(/Line: (\d+)/);
+            const colMatch = err.message.match(/Column: (\d+)/);
+
+            if (lineMatch) {
+              const lineNum = parseInt(lineMatch[1]) - 1;
+              const colNum = colMatch ? parseInt(colMatch[1]) - 1 : 0;
+
+              if (lines[lineNum]) {
+                console.error(
+                  `Problematic line ${lineNum + 1}: ${lines[lineNum]}`
+                );
+                if (colNum > 0) {
+                  console.error(
+                    `Problem at column ${colNum + 1}: "${lines[
+                      lineNum
+                    ].substring(Math.max(0, colNum - 10), colNum + 10)}"`
+                  );
+                }
+
+                // Try to fix the specific line and retry parsing
+                console.log(
+                  "Attempting to fix the problematic line and retry..."
+                );
+                let fixedData = cleanedData;
+                const problematicLine = lines[lineNum];
+
+                // Additional fixes for common XML issues
+                let fixedLine = problematicLine
+                  .replace(/&(?![a-zA-Z0-9#]{1,7};)/g, "&amp;") // Fix unescaped ampersands
+                  .replace(/</g, "&lt;") // Escape < characters in content
+                  .replace(/>/g, "&gt;") // Escape > characters in content
+                  .replace(/&lt;(\/?[a-zA-Z][^>]*)&gt;/g, "<$1>") // Restore XML tags
+                  .replace(/&lt;!\[CDATA\[/g, "<![CDATA[") // Restore CDATA sections
+                  .replace(/\]\]&gt;/g, "]]>"); // Restore CDATA end
+
+                lines[lineNum] = fixedLine;
+                fixedData = lines.join("\n");
+
+                // Try parsing again with the fixed data
+                const retryParser = new xml2js.Parser({
+                  trim: true,
+                  normalize: true,
+                  explicitArray: true,
+                  mergeAttrs: false,
+                });
+
+                retryParser.parseString(fixedData, (retryErr, retryResult) => {
+                  if (retryErr) {
+                    console.error(
+                      "Retry parsing also failed:",
+                      retryErr.message
+                    );
+                    reject(`Error parsing XML from ${filePath}: ${err}`);
+                  } else {
+                    console.log(
+                      "Successfully parsed XML after fixing problematic line"
+                    );
+                    resolve(retryResult);
+                  }
+                });
+                return;
+              }
+            }
+          }
+
           reject(`Error parsing XML from ${filePath}: ${err}`);
           return;
         }
