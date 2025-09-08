@@ -3,7 +3,6 @@ import { getCookie } from "../cookies";
 const baseDomains = ["https://deriv.com", "https://staging.deriv.com"];
 
 const restrictedPaths = [
-  "/newsroom",
   "/trade/options",
   "/markets/derived-indices/synthetic-indices",
   "/tradingview",
@@ -17,16 +16,12 @@ const restrictedPaths = [
   "/trading-platforms/deriv-go",
   "/trading-platforms/deriv-bot",
   "/p2p",
-  "/academy",
   "/blog",
   "/trading-terms-glossary",
   "/partners",
-  "/derivtech",
-  "/derivlife",
   "/fraud-prevention",
   "/partners-help-centre",
   "/locations",
-  "/our-culture",
   "/terms-and-conditions/deriv-mauritius-ltd-additional-terms",
   "/terms-and-conditions/deriv-fx-ltd-additional-terms",
   "/terms-and-conditions/deriv-bvi-ltd-additional-terms",
