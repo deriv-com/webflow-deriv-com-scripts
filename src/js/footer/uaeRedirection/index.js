@@ -56,8 +56,23 @@ function normalizeUrl(url) {
   }
 }
 
+// Remove a leading locale segment like "/fr", "/ar" or "/zh-cn" from a pathname
+function stripLocaleFromPath(pathname) {
+  if (!pathname || pathname === "/") return "/";
+  const segments = pathname.split("/");
+  if (segments.length > 1) {
+    const firstSegment = segments[1];
+    if (/^[a-z]{2}(?:-[a-z]{2})?$/i.test(firstSegment)) {
+      const rest = segments.slice(2).join("/");
+      return rest ? `/${rest}` : "/";
+    }
+  }
+  return pathname;
+}
+
 function isUaeRestrictedPage() {
-  const currentUrl = window.location.origin + window.location.pathname;
+  const strippedPath = stripLocaleFromPath(window.location.pathname);
+  const currentUrl = window.location.origin + strippedPath;
   const normalizedCurrent = normalizeUrl(currentUrl);
   return uaeRestrictedPages.some((base) => {
     const normalizedBase = normalizeUrl(base);
