@@ -10,12 +10,6 @@ const argv = yargs
     type: "string",
     demandOption: true,
   })
-  .option("academy-sitemap", {
-    alias: "a",
-    description: "The academy sitemap file",
-    type: "string",
-    demandOption: true,
-  })
   .option("output-file", {
     alias: "o",
     description: "The output sitemap file",
@@ -32,7 +26,6 @@ const argv = yargs
   .alias("help", "h").argv;
 
 const stagingSitemapFile = argv["staging-sitemap"];
-const academySitemapFile = argv["academy-sitemap"];
 const outputFile = argv["output-file"];
 const newDomain = argv["new-domain"];
 
@@ -45,115 +38,9 @@ async function readAndParseXml(filePath) {
         return;
       }
 
-      // Clean up common XML issues before parsing
-      let cleanedData = data;
-
-      // Fix common XML entity issues
-      // Replace unescaped & characters that are not part of valid entities
-      cleanedData = cleanedData.replace(/&(?![a-zA-Z0-9#]{1,7};)/g, "&amp;");
-
-      // Fix any malformed entities
-      cleanedData = cleanedData.replace(/&([^;]*);/g, (match, entity) => {
-        // Check if it's a valid XML entity
-        const validEntities = ["amp", "lt", "gt", "quot", "apos"];
-        const numericEntity =
-          /^#\d+$/.test(entity) || /^#x[0-9a-fA-F]+$/.test(entity);
-
-        if (validEntities.includes(entity) || numericEntity) {
-          return match; // Keep valid entities
-        }
-
-        // For invalid entities, escape the ampersand
-        return "&amp;" + entity + ";";
-      });
-
-      // Remove any control characters that might cause issues
-      cleanedData = cleanedData.replace(
-        /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,
-        ""
-      );
-
-      const parser = new xml2js.Parser({
-        // Add options to be more lenient with XML parsing
-        trim: true,
-        normalize: true,
-        explicitArray: true,
-        mergeAttrs: false,
-      });
-
-      parser.parseString(cleanedData, (err, result) => {
+      const parser = new xml2js.Parser();
+      parser.parseString(data, (err, result) => {
         if (err) {
-          console.error(`Detailed XML parsing error for ${filePath}:`);
-          console.error(`Error: ${err.message}`);
-
-          // Try to show the problematic line if possible
-          if (err.message.includes("Line:")) {
-            const lines = cleanedData.split("\n");
-            const lineMatch = err.message.match(/Line: (\d+)/);
-            const colMatch = err.message.match(/Column: (\d+)/);
-
-            if (lineMatch) {
-              const lineNum = parseInt(lineMatch[1]) - 1;
-              const colNum = colMatch ? parseInt(colMatch[1]) - 1 : 0;
-
-              if (lines[lineNum]) {
-                console.error(
-                  `Problematic line ${lineNum + 1}: ${lines[lineNum]}`
-                );
-                if (colNum > 0) {
-                  console.error(
-                    `Problem at column ${colNum + 1}: "${lines[
-                      lineNum
-                    ].substring(Math.max(0, colNum - 10), colNum + 10)}"`
-                  );
-                }
-
-                // Try to fix the specific line and retry parsing
-                console.log(
-                  "Attempting to fix the problematic line and retry..."
-                );
-                let fixedData = cleanedData;
-                const problematicLine = lines[lineNum];
-
-                // Additional fixes for common XML issues
-                let fixedLine = problematicLine
-                  .replace(/&(?![a-zA-Z0-9#]{1,7};)/g, "&amp;") // Fix unescaped ampersands
-                  .replace(/</g, "&lt;") // Escape < characters in content
-                  .replace(/>/g, "&gt;") // Escape > characters in content
-                  .replace(/&lt;(\/?[a-zA-Z][^>]*)&gt;/g, "<$1>") // Restore XML tags
-                  .replace(/&lt;!\[CDATA\[/g, "<![CDATA[") // Restore CDATA sections
-                  .replace(/\]\]&gt;/g, "]]>"); // Restore CDATA end
-
-                lines[lineNum] = fixedLine;
-                fixedData = lines.join("\n");
-
-                // Try parsing again with the fixed data
-                const retryParser = new xml2js.Parser({
-                  trim: true,
-                  normalize: true,
-                  explicitArray: true,
-                  mergeAttrs: false,
-                });
-
-                retryParser.parseString(fixedData, (retryErr, retryResult) => {
-                  if (retryErr) {
-                    console.error(
-                      "Retry parsing also failed:",
-                      retryErr.message
-                    );
-                    reject(`Error parsing XML from ${filePath}: ${err}`);
-                  } else {
-                    console.log(
-                      "Successfully parsed XML after fixing problematic line"
-                    );
-                    resolve(retryResult);
-                  }
-                });
-                return;
-              }
-            }
-          }
-
           reject(`Error parsing XML from ${filePath}: ${err}`);
           return;
         }
@@ -161,52 +48,6 @@ async function readAndParseXml(filePath) {
       });
     });
   });
-}
-
-// Function to filter out academy URLs from staging sitemap
-function filterAcademyUrls(stagingSitemap) {
-  if (!stagingSitemap.urlset || !stagingSitemap.urlset.url) {
-    return stagingSitemap;
-  }
-
-  stagingSitemap.urlset.url = stagingSitemap.urlset.url.filter((urlObj) => {
-    if (!urlObj.loc || urlObj.loc.length === 0) {
-      return true;
-    }
-
-    const url = urlObj.loc[0];
-    return !url.match(/deriv\.(com|be|me)\/academy/);
-  });
-
-  return stagingSitemap;
-}
-
-// Function to filter out URLs with '/ae/' or '/ae' in academySitemap
-function filterAeUrls(sitemap) {
-  if (!sitemap.urlset || !sitemap.urlset.url) {
-    return sitemap;
-  }
-
-  sitemap.urlset.url = sitemap.urlset.url.filter((urlObj) => {
-    if (!urlObj.loc || urlObj.loc.length === 0) {
-      return true;
-    }
-
-    const url = urlObj.loc[0];
-
-    // Check for various patterns of '/ae' in the URL
-    if (url.includes("/ae/")) return false; // URLs containing /ae/ anywhere
-    if (url.endsWith("/ae")) return false; // URLs ending with /ae
-    if (url.endsWith("/ae/")) return false; // URLs ending with /ae/
-
-    // Check for /ae as a path segment (e.g., /academy/ae or /academy/ae/)
-    const urlParts = new URL(url).pathname.split("/");
-    if (urlParts.includes("ae")) return false;
-
-    return true;
-  });
-
-  return sitemap;
 }
 
 // Function to replace domains in sitemap
@@ -221,10 +62,6 @@ function replaceDomains(sitemap, newDomain) {
         /https:\/\/([^.]*\.)?deriv\.(com|be|me)/g,
         `https://${newDomain}`
       );
-      urlObj.loc[0] = urlObj.loc[0].replace(
-        /https:\/\/academy-v2\.webflow\.io/g,
-        `https://${newDomain}`
-      );
     }
 
     // Handle alternate language links if they exist
@@ -235,36 +72,12 @@ function replaceDomains(sitemap, newDomain) {
             /https:\/\/([^.]*\.)?deriv\.(com|be|me)/g,
             `https://${newDomain}`
           );
-          link.$.href = link.$.href.replace(
-            /https:\/\/academy-v2\.webflow\.io/g,
-            `https://${newDomain}`
-          );
         }
       });
     }
   });
 
   return sitemap;
-}
-
-// Function to combine sitemaps
-function combineSitemaps(stagingSitemap, academySitemap) {
-  if (
-    !stagingSitemap.urlset ||
-    !stagingSitemap.urlset.url ||
-    !academySitemap.urlset ||
-    !academySitemap.urlset.url
-  ) {
-    console.error("Invalid sitemap structure");
-    return stagingSitemap;
-  }
-
-  // Combine URLs from both sitemaps
-  stagingSitemap.urlset.url = stagingSitemap.urlset.url.concat(
-    academySitemap.urlset.url
-  );
-
-  return stagingSitemap;
 }
 
 // Function to filter out excluded URLs and patterns
@@ -329,8 +142,7 @@ function filterExcludedUrls(sitemap, newDomain) {
       return false;
     }
 
-    // Check for static URLs - more lenient matching like in modify_sitemap.js
-    // Check if the URL contains any of the static URLs (not just exact matches)
+    // Check for static URLs - more lenient matching
     if (
       staticDocUrls.some((staticUrl) => {
         const modifiedStaticUrl = staticUrl.replace(
@@ -392,39 +204,19 @@ function filterExcludedUrls(sitemap, newDomain) {
   return sitemap;
 }
 
-// Main function to process sitemaps
+// Main function to process sitemap
 async function processSitemaps() {
   try {
-    console.log("Reading sitemap files...");
+    console.log("Reading staging sitemap file...");
     const stagingSitemap = await readAndParseXml(stagingSitemapFile);
-    const academySitemap = await readAndParseXml(academySitemapFile);
 
-    console.log("Replacing domains in sitemaps...");
+    console.log("Replacing domains in staging sitemap...");
     const processedStagingSitemap = replaceDomains(stagingSitemap, newDomain);
 
-    console.log("Filtering academy URLs from staging sitemap...");
-    const filteredStagingSitemap = filterAcademyUrls(processedStagingSitemap);
-
-    console.log(
-      "Filtering out URLs containing '/ae' path segment from academy sitemap..."
-    );
-    const filteredAcademySitemap = filterAeUrls(academySitemap);
-
-    const processedAcademySitemap = replaceDomains(
-      filteredAcademySitemap,
-      `${newDomain}/academy`
-    );
-
-    console.log("Combining sitemaps...");
-    const combinedSitemap = combineSitemaps(
-      filteredStagingSitemap,
-      processedAcademySitemap
-    );
-
     console.log("Filtering excluded URLs...");
-    const finalSitemap = filterExcludedUrls(combinedSitemap, newDomain);
+    const finalSitemap = filterExcludedUrls(processedStagingSitemap, newDomain);
 
-    console.log("Writing combined sitemap to output file...");
+    console.log("Writing sitemap to output file...");
 
     // Clean up URLs to remove carriage returns and line feeds
     if (finalSitemap.urlset && finalSitemap.urlset.url) {
@@ -483,10 +275,10 @@ async function processSitemaps() {
         console.error("Error writing output file:", err);
         process.exit(1);
       }
-      console.log("Combined sitemap has been written to", outputFile);
+      console.log("Sitemap has been written to", outputFile);
     });
   } catch (error) {
-    console.error("Error processing sitemaps:", error);
+    console.error("Error processing sitemap:", error);
     process.exit(1);
   }
 }
