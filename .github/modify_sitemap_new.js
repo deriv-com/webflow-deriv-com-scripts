@@ -10,12 +10,6 @@ const argv = yargs
     type: "string",
     demandOption: true,
   })
-  .option("academy-sitemap", {
-    alias: "a",
-    description: "The academy sitemap file",
-    type: "string",
-    demandOption: true,
-  })
   .option("output-file", {
     alias: "o",
     description: "The output sitemap file",
@@ -32,7 +26,6 @@ const argv = yargs
   .alias("help", "h").argv;
 
 const stagingSitemapFile = argv["staging-sitemap"];
-const academySitemapFile = argv["academy-sitemap"];
 const outputFile = argv["output-file"];
 const newDomain = argv["new-domain"];
 
@@ -57,52 +50,6 @@ async function readAndParseXml(filePath) {
   });
 }
 
-// Function to filter out academy URLs from staging sitemap
-function filterAcademyUrls(stagingSitemap) {
-  if (!stagingSitemap.urlset || !stagingSitemap.urlset.url) {
-    return stagingSitemap;
-  }
-
-  stagingSitemap.urlset.url = stagingSitemap.urlset.url.filter((urlObj) => {
-    if (!urlObj.loc || urlObj.loc.length === 0) {
-      return true;
-    }
-
-    const url = urlObj.loc[0];
-    return !url.match(/deriv\.(com|be|me)\/academy/);
-  });
-
-  return stagingSitemap;
-}
-
-// Function to filter out URLs with '/ae/' or '/ae' in academySitemap
-function filterAeUrls(sitemap) {
-  if (!sitemap.urlset || !sitemap.urlset.url) {
-    return sitemap;
-  }
-
-  sitemap.urlset.url = sitemap.urlset.url.filter((urlObj) => {
-    if (!urlObj.loc || urlObj.loc.length === 0) {
-      return true;
-    }
-
-    const url = urlObj.loc[0];
-
-    // Check for various patterns of '/ae' in the URL
-    if (url.includes("/ae/")) return false; // URLs containing /ae/ anywhere
-    if (url.endsWith("/ae")) return false; // URLs ending with /ae
-    if (url.endsWith("/ae/")) return false; // URLs ending with /ae/
-
-    // Check for /ae as a path segment (e.g., /academy/ae or /academy/ae/)
-    const urlParts = new URL(url).pathname.split("/");
-    if (urlParts.includes("ae")) return false;
-
-    return true;
-  });
-
-  return sitemap;
-}
-
 // Function to replace domains in sitemap
 function replaceDomains(sitemap, newDomain) {
   if (!sitemap.urlset || !sitemap.urlset.url) {
@@ -115,10 +62,6 @@ function replaceDomains(sitemap, newDomain) {
         /https:\/\/([^.]*\.)?deriv\.(com|be|me)/g,
         `https://${newDomain}`
       );
-      urlObj.loc[0] = urlObj.loc[0].replace(
-        /https:\/\/academy-v2\.webflow\.io/g,
-        `https://${newDomain}`
-      );
     }
 
     // Handle alternate language links if they exist
@@ -129,36 +72,12 @@ function replaceDomains(sitemap, newDomain) {
             /https:\/\/([^.]*\.)?deriv\.(com|be|me)/g,
             `https://${newDomain}`
           );
-          link.$.href = link.$.href.replace(
-            /https:\/\/academy-v2\.webflow\.io/g,
-            `https://${newDomain}`
-          );
         }
       });
     }
   });
 
   return sitemap;
-}
-
-// Function to combine sitemaps
-function combineSitemaps(stagingSitemap, academySitemap) {
-  if (
-    !stagingSitemap.urlset ||
-    !stagingSitemap.urlset.url ||
-    !academySitemap.urlset ||
-    !academySitemap.urlset.url
-  ) {
-    console.error("Invalid sitemap structure");
-    return stagingSitemap;
-  }
-
-  // Combine URLs from both sitemaps
-  stagingSitemap.urlset.url = stagingSitemap.urlset.url.concat(
-    academySitemap.urlset.url
-  );
-
-  return stagingSitemap;
 }
 
 // Function to filter out excluded URLs and patterns
@@ -223,8 +142,7 @@ function filterExcludedUrls(sitemap, newDomain) {
       return false;
     }
 
-    // Check for static URLs - more lenient matching like in modify_sitemap.js
-    // Check if the URL contains any of the static URLs (not just exact matches)
+    // Check for static URLs - more lenient matching
     if (
       staticDocUrls.some((staticUrl) => {
         const modifiedStaticUrl = staticUrl.replace(
@@ -286,39 +204,19 @@ function filterExcludedUrls(sitemap, newDomain) {
   return sitemap;
 }
 
-// Main function to process sitemaps
+// Main function to process sitemap
 async function processSitemaps() {
   try {
-    console.log("Reading sitemap files...");
+    console.log("Reading staging sitemap file...");
     const stagingSitemap = await readAndParseXml(stagingSitemapFile);
-    const academySitemap = await readAndParseXml(academySitemapFile);
 
-    console.log("Replacing domains in sitemaps...");
+    console.log("Replacing domains in staging sitemap...");
     const processedStagingSitemap = replaceDomains(stagingSitemap, newDomain);
 
-    console.log("Filtering academy URLs from staging sitemap...");
-    const filteredStagingSitemap = filterAcademyUrls(processedStagingSitemap);
-
-    console.log(
-      "Filtering out URLs containing '/ae' path segment from academy sitemap..."
-    );
-    const filteredAcademySitemap = filterAeUrls(academySitemap);
-
-    const processedAcademySitemap = replaceDomains(
-      filteredAcademySitemap,
-      `${newDomain}/academy`
-    );
-
-    console.log("Combining sitemaps...");
-    const combinedSitemap = combineSitemaps(
-      filteredStagingSitemap,
-      processedAcademySitemap
-    );
-
     console.log("Filtering excluded URLs...");
-    const finalSitemap = filterExcludedUrls(combinedSitemap, newDomain);
+    const finalSitemap = filterExcludedUrls(processedStagingSitemap, newDomain);
 
-    console.log("Writing combined sitemap to output file...");
+    console.log("Writing sitemap to output file...");
 
     // Clean up URLs to remove carriage returns and line feeds
     if (finalSitemap.urlset && finalSitemap.urlset.url) {
@@ -377,10 +275,10 @@ async function processSitemaps() {
         console.error("Error writing output file:", err);
         process.exit(1);
       }
-      console.log("Combined sitemap has been written to", outputFile);
+      console.log("Sitemap has been written to", outputFile);
     });
   } catch (error) {
-    console.error("Error processing sitemaps:", error);
+    console.error("Error processing sitemap:", error);
     process.exit(1);
   }
 }
