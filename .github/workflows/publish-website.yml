@@ -97,7 +97,6 @@ jobs:
         run: |
           mkdir -p temp
           curl -o temp/staging_sitemap.xml https://staging.deriv.com/sitemap.xml || exit 1
-          curl -o temp/academy_sitemap.xml https://academy-v2.webflow.io/sitemap.xml || exit 1
           curl -o temp/robots.txt https://staging.deriv.com/robots.txt || exit 1
 
       - name: Generate Combined Sitemap
