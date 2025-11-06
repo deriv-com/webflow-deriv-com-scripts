@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "de",
     "pl",
     "uz",
+    "mn",
+    "km",
+    "ta",
   ];
   const paths = window.location.pathname.split("/");
   const first_path = paths[1];
