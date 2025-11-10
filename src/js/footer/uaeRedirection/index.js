@@ -21,7 +21,6 @@ const restrictedPaths = [
   "/partners",
   "/fraud-prevention",
   "/partners-help-centre",
-  "/locations",
   "/terms-and-conditions/deriv-mauritius-ltd-additional-terms",
   "/terms-and-conditions/deriv-fx-ltd-additional-terms",
   "/terms-and-conditions/deriv-bvi-ltd-additional-terms",
