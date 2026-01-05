@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let language = current_language;
       if (language === "zh-tw") language = "zh_tw";
       if (language === "zh-cn") language = "zh_cn";
-      link.href = `${replaceUrl}/tradershub/signup?lang=${language}`;
+      link.href = `${replaceUrl}/dashboard/signup?lang=${language}`;
     });
   };
 
