@@ -40,7 +40,7 @@ jobs:
           deriv_me_site_id: ${{ secrets.DERIV_ME_SITE_ID }}
           deriv_be_site_id: ${{ secrets.DERIV_BE_SITE_ID }}
           webflow_general_site_id: ${{ secrets.WEBFLOW_GENERAL_SITE_ID }}
-      
+
       # Trigger DR workflow only on production release.
       - name: Trigger DR Workflow
         if: ${{ github.event.inputs.production_release == 'true' }}
@@ -86,7 +86,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Install yargs and xml2js
         shell: bash
