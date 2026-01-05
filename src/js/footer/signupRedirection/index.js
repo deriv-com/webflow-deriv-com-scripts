@@ -45,11 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const hostnameMap = {
     "staging.deriv.com": {
       selectorUrl: "https://staging.deriv.com",
-      replaceUrl: "https://staging-hub.deriv.com",
+      replaceUrl: "https://staging-home.deriv.com",
     },
     "deriv.com": {
       selectorUrl: "https://deriv.com",
-      replaceUrl: "https://hub.deriv.com",
+      replaceUrl: "https://home.deriv.com",
     },
     "deriv.be": {
       selectorUrl: "https://deriv.be",
