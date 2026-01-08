@@ -35,9 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href === `${selectorUrl}/${current_language}/landing/signup`
     );
     links.forEach((link) => {
-      let language = current_language;
-      if (language === "zh-tw") language = "zh_tw";
-      if (language === "zh-cn") language = "zh_cn";
       link.href = `${replaceUrl}/dashboard/signup?lang=${language}`;
     });
   };
