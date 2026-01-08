@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href === `${selectorUrl}/${current_language}/landing/signup`
     );
     links.forEach((link) => {
-      link.href = `${replaceUrl}/signup?lang=${language}`;
+      link.href = `${replaceUrl}/signup?lang=${current_language}`;
     });
   };
 
