@@ -35,26 +35,26 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href === `${selectorUrl}/${current_language}/landing/signup`
     );
     links.forEach((link) => {
-      link.href = `${replaceUrl}/dashboard/signup?lang=${language}`;
+      link.href = `${replaceUrl}/signup?lang=${language}`;
     });
   };
 
   const hostnameMap = {
     "staging.deriv.com": {
       selectorUrl: "https://staging.deriv.com",
-      replaceUrl: "https://staging-home.deriv.com",
+      replaceUrl: "https://staging-home.deriv.com/dashboard",
     },
     "deriv.com": {
       selectorUrl: "https://deriv.com",
-      replaceUrl: "https://home.deriv.com",
+      replaceUrl: "https://home.deriv.com/dashboard",
     },
     "deriv.be": {
       selectorUrl: "https://deriv.be",
-      replaceUrl: "https://hub.deriv.be",
+      replaceUrl: "https://hub.deriv.be/tradershub",
     },
     "deriv.me": {
       selectorUrl: "https://deriv.me",
-      replaceUrl: "https://hub.deriv.me",
+      replaceUrl: "https://hub.deriv.me/tradershub",
     },
   };
 
