@@ -27,12 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const current_language = languages.includes(first_path) ? first_path : "en";
 
   const updateSignupLinks = (selectorUrl, replaceUrl) => {
-    const links = Array.from(document.querySelectorAll("a")).filter(
-      (link) =>
-        link.href === `${selectorUrl}/signup` ||
-        link.href === `${selectorUrl}/${current_language}/signup` ||
-        link.href === `${selectorUrl}/landing/signup` ||
-        link.href === `${selectorUrl}/${current_language}/landing/signup`
+    const signupPathPatterns = [
+      "/signup",
+      `/${current_language}/signup`,
+      "/landing/signup",
+      `/${current_language}/landing/signup`,
+      "/eu/signup",
+      `/${current_language}/eu/signup`,
+    ];
+
+    const links = Array.from(document.querySelectorAll("a")).filter((link) =>
+      signupPathPatterns.some(
+        (pattern) => link.href === `${selectorUrl}${pattern}`
+      )
     );
     links.forEach((link) => {
       link.href = `${replaceUrl}/signup?lang=${current_language}`;
