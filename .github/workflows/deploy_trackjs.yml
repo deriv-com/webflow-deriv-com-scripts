@@ -1,0 +1,167 @@
+name: Deploy TrackJS Script
+
+on:
+  schedule:
+    # Run weekly on Mondays at 2 AM UTC to check for updates
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+    # Allow manual triggering
+
+jobs:
+  download-trackjs:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check_changes.outputs.changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download TrackJS script
+        run: |
+          echo "Downloading TrackJS script from CDN..."
+          curl -o trackjs.js https://cdn.trackjs.com/agent/v3/latest/t.js
+
+          # Verify the download was successful
+          if [ ! -f trackjs.js ]; then
+            echo "Failed to download TrackJS script"
+            exit 1
+          fi
+
+          echo "TrackJS script downloaded successfully"
+          ls -la trackjs.js
+
+      - name: Check if script has changed
+        id: check_changes
+        run: |
+          echo "Checking if TrackJS script has changed..."
+
+          # Download current script from assets.deriv.com to compare
+          curl -s -o current_trackjs.js https://assets.deriv.com/tracking/trackjs.js || echo "No existing script found"
+
+          # Compare files if current script exists
+          if [ -f current_trackjs.js ]; then
+            if cmp -s trackjs.js current_trackjs.js; then
+              echo "TrackJS script has not changed. Skipping deployment."
+              echo "changed=false" >> $GITHUB_OUTPUT
+            else
+              echo "TrackJS script has changed. Proceeding with deployment."
+              echo "changed=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No existing script found. Proceeding with initial deployment."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Prepare upload directory structure
+        run: |
+          mkdir -p content/deriv.com/tracking
+          mkdir -p content/deriv.ae/tracking
+          cp trackjs.js content/deriv.com/tracking/trackjs.js
+          cp trackjs.js content/deriv.ae/tracking/trackjs.js
+          echo "Prepared trackjs.js for upload to both domains"
+
+      - name: Upload artifacts
+        if: steps.check_changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: trackjs-files
+          path: content/
+
+  deploy-deriv-com:
+    needs: download-trackjs
+    if: needs.download-trackjs.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: trackjs-files
+          path: content/
+
+      - name: Upload to R2 - deriv.com
+        uses: ./.github/actions/upload_to_r2
+        with:
+          r2_account_id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_bucket_name: ${{ secrets.R2_BUCKET_NAME }}
+
+      - name: Verify upload - deriv.com
+        run: |
+          echo "Verifying upload for deriv.com..."
+          sleep 10
+          EXPECTED_URL="https://assets.deriv.com/tracking/trackjs.js"
+          echo "Testing URL: ${EXPECTED_URL}"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${EXPECTED_URL}")
+          if [ "${HTTP_STATUS}" = "200" ]; then
+            echo "✅ TrackJS script is successfully accessible at ${EXPECTED_URL}"
+          else
+            echo "❌ Failed to access TrackJS script at ${EXPECTED_URL} (HTTP ${HTTP_STATUS})"
+            echo "This might be due to CDN propagation delay. Manual verification recommended."
+          fi
+
+  deploy-deriv-ae:
+    needs: download-trackjs
+    if: needs.download-trackjs.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: trackjs-files
+          path: content/
+
+      - name: Prepare deriv.ae content
+        run: |
+          # Move deriv.ae content to the expected location for upload action
+          rm -rf content/deriv.com
+          mv content/deriv.ae content/deriv.com
+          echo "Prepared deriv.ae content for upload"
+
+      - name: Upload to R2 - deriv.ae
+        uses: ./.github/actions/upload_to_r2
+        with:
+          r2_account_id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_bucket_name: ${{ secrets.R2_BUCKET_NAME_AE }}
+
+      - name: Verify upload - deriv.ae
+        run: |
+          echo "Verifying upload for deriv.ae..."
+          sleep 10
+          EXPECTED_URL="https://assets.deriv.ae/tracking/trackjs.js"
+          echo "Testing URL: ${EXPECTED_URL}"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${EXPECTED_URL}")
+          if [ "${HTTP_STATUS}" = "200" ]; then
+            echo "✅ TrackJS script is successfully accessible at ${EXPECTED_URL}"
+          else
+            echo "❌ Failed to access TrackJS script at ${EXPECTED_URL} (HTTP ${HTTP_STATUS})"
+            echo "This might be due to CDN propagation delay. Manual verification recommended."
+          fi
+
+  notify-completion:
+    needs: [deploy-deriv-com, deploy-deriv-ae]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Notify deployment status
+        run: |
+          if [ "${{ needs.deploy-deriv-com.result }}" = "success" ] && [ "${{ needs.deploy-deriv-ae.result }}" = "success" ]; then
+            echo "🎉 TrackJS script deployment completed successfully!"
+            echo "The script is now available at:"
+            echo "- https://assets.deriv.com/tracking/trackjs.js"
+            echo "- https://assets.deriv.ae/tracking/trackjs.js"
+          else
+            echo "❌ TrackJS script deployment failed. Please check the logs above."
+            echo "deriv.com deployment: ${{ needs.deploy-deriv-com.result }}"
+            echo "deriv.ae deployment: ${{ needs.deploy-deriv-ae.result }}"
+            exit 1
+          fi
