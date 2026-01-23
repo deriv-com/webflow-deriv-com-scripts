@@ -28,7 +28,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.23"
   },
   "overrides": {
     "brace-expansion": "^2.0.2",
