@@ -28,10 +28,14 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.23"
   },
   "overrides": {
     "brace-expansion": "^2.0.2",
-    "cross-spawn": "^7.0.5"
+    "cross-spawn": "^7.0.5",
+    "minimatch": "^10.2.3",
+    "rollup": "^4.59.0",
+    "tar": "^7.5.8",
+    "lodash-es": "^4.17.23"
   }
 }
