@@ -35,10 +35,14 @@ jobs:
           name: ae-sitemap
           path: output/
 
+      # Uploads directly to R2 using the same account/bucket as deriv.com,
+      # under an "ae" prefix, so files land at <bucket>/ae/sitemap.xml etc.
       - name: Upload to R2
-        uses: ./.github/actions/upload_to_r2
+        uses: ryand56/r2-upload-action@latest
         with:
-          r2_account_id: ${{ secrets.R2_ACCOUNT_ID }}
-          r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
-          r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          r2_bucket_name: ${{ secrets.R2_BUCKET_NAME }}
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: ${{ secrets.R2_BUCKET_NAME }}
+          source-dir: output/ae
+          destination-dir: ae
