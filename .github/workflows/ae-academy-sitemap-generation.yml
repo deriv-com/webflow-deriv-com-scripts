@@ -1,0 +1,49 @@
+name: AE Academy Sitemap Generation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  generate_ae_academy_sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "24"
+
+      - name: Generate rewritten sitemap + robots.txt
+        shell: bash
+        run: node .github/generate_ae_academy_sitemap.js
+
+      - name: Show output
+        shell: bash
+        run: |
+          echo "----- output/ae/academy/sitemap.xml -----"
+          cat output/ae/academy/sitemap.xml
+          if [ -f output/ae/academy/robots.txt ]; then
+            echo "----- output/ae/academy/robots.txt -----"
+            cat output/ae/academy/robots.txt
+          fi
+
+      - name: Upload as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ae-academy-sitemap
+          path: output/
+
+      # Uploads directly to R2 using the same account/bucket as deriv.com,
+      # under an "ae/academy" prefix, so files land at
+      # <bucket>/ae/academy/sitemap.xml -> https://urls.deriv.com/ae/academy/sitemap.xml
+      - name: Upload to R2
+        uses: ryand56/r2-upload-action@latest
+        with:
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: ${{ secrets.R2_BUCKET_NAME }}
+          source-dir: output/ae/academy
+          destination-dir: ae/academy
