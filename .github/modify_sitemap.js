@@ -30,7 +30,9 @@ fs.readFile(inputFile, "utf8", (err, data) => {
   }
 
   const pattern = /https:\/\/([^.]*\.)?deriv\.(com|be|me)/g;
-  const newContent = data.replace(pattern, `https://${newDomain}`);
+  const newContent = data
+    .replace(pattern, `https://${newDomain}`)
+    .replace(/\s*<lastmod>[\s\S]*?<\/lastmod>/g, "");
 
   const urlBlockPattern = /(<url>[\s\S]*?<\/url>)/g;
   const xhtmlLinkPattern =
