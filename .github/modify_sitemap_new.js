@@ -80,6 +80,21 @@ function replaceDomains(sitemap, newDomain) {
   return sitemap;
 }
 
+// Sitemap lastmod values must represent each page's real, significant update.
+// The source sitemap does not provide reliably verifiable values, so omit the
+// optional field rather than publishing a generation timestamp for every URL.
+function removeLastModifiedDates(sitemap) {
+  if (!sitemap.urlset || !sitemap.urlset.url) {
+    return sitemap;
+  }
+
+  sitemap.urlset.url.forEach((urlObj) => {
+    delete urlObj.lastmod;
+  });
+
+  return sitemap;
+}
+
 // Function to filter out excluded URLs and patterns
 function filterExcludedUrls(sitemap, newDomain) {
   if (!sitemap.urlset || !sitemap.urlset.url) {
@@ -213,8 +228,16 @@ async function processSitemaps() {
     console.log("Replacing domains in staging sitemap...");
     const processedStagingSitemap = replaceDomains(stagingSitemap, newDomain);
 
+    console.log("Removing last modification dates...");
+    const sitemapWithoutLastModifiedDates = removeLastModifiedDates(
+      processedStagingSitemap
+    );
+
     console.log("Filtering excluded URLs...");
-    const finalSitemap = filterExcludedUrls(processedStagingSitemap, newDomain);
+    const finalSitemap = filterExcludedUrls(
+      sitemapWithoutLastModifiedDates,
+      newDomain
+    );
 
     console.log("Writing sitemap to output file...");
 
