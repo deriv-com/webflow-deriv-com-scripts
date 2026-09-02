@@ -24,10 +24,31 @@ jobs:
 
       - name: Download sitemaps
         shell: bash
+        env:
+          SOURCE_ORIGIN: "https://staging-webflow.deriv.com"
         run: |
+          set -euo pipefail
           mkdir -p temp
-          curl -o temp/staging_sitemap.xml https://staging-webflow.deriv.com/sitemap.xml || exit 1
-          curl -o temp/robots.txt https://staging-webflow.deriv.com/robots.txt || exit 1
+          # --fail is essential: the origin has served HTML error pages with a
+          # 200 status, and without it curl saves the error body and exits 0.
+          curl --fail --silent --show-error --location \
+            --retry 5 --retry-delay 10 --retry-all-errors --max-time 300 \
+            -o temp/staging_sitemap.xml "$SOURCE_ORIGIN/sitemap.xml"
+          curl --fail --silent --show-error --location \
+            --retry 5 --retry-delay 10 --retry-all-errors --max-time 60 \
+            -o temp/robots.txt "$SOURCE_ORIGIN/robots.txt"
+
+      - name: Verify downloaded sitemap
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! head -c 4096 temp/staging_sitemap.xml | grep -q '<urlset'; then
+            echo "::error::Downloaded file has no <urlset> root element; refusing to publish it."
+            echo "First 500 bytes of the response:"
+            head -c 500 temp/staging_sitemap.xml
+            exit 1
+          fi
+          echo "Source sitemap looks valid ($(wc -c < temp/staging_sitemap.xml) bytes)."
 
       - name: Generate Combined Sitemap
         uses: ./.github/actions/generate_sitemap_and_robots_new
