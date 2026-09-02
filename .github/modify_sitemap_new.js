@@ -50,6 +50,25 @@ async function readAndParseXml(filePath) {
   });
 }
 
+// The source endpoint has served HTML error pages with a 200 status. Such a
+// document parses as valid XML, so without this check every transform below
+// silently no-ops and the error page gets published as the sitemap.
+const MIN_EXPECTED_URLS = 1000;
+
+function assertIsSitemap(parsed, filePath) {
+  if (!parsed || !parsed.urlset) {
+    const root = Object.keys(parsed || {})[0];
+    throw new Error(
+      `${filePath} is not a sitemap: expected a <urlset> root element, found ` +
+        `<${root || "nothing"}>`
+    );
+  }
+
+  if (!Array.isArray(parsed.urlset.url) || parsed.urlset.url.length === 0) {
+    throw new Error(`${filePath} has a <urlset> root but no <url> entries`);
+  }
+}
+
 // Function to replace domains in sitemap
 function replaceDomains(sitemap, newDomain) {
   if (!sitemap.urlset || !sitemap.urlset.url) {
@@ -224,6 +243,8 @@ async function processSitemaps() {
   try {
     console.log("Reading staging sitemap file...");
     const stagingSitemap = await readAndParseXml(stagingSitemapFile);
+    assertIsSitemap(stagingSitemap, stagingSitemapFile);
+    console.log(`Parsed ${stagingSitemap.urlset.url.length} source URLs.`);
 
     console.log("Replacing domains in staging sitemap...");
     const processedStagingSitemap = replaceDomains(stagingSitemap, newDomain);
@@ -239,7 +260,15 @@ async function processSitemaps() {
       newDomain
     );
 
-    console.log("Writing sitemap to output file...");
+    const remainingUrls = finalSitemap.urlset.url.length;
+    if (remainingUrls < MIN_EXPECTED_URLS) {
+      throw new Error(
+        `Only ${remainingUrls} URLs survived filtering (expected at least ` +
+          `${MIN_EXPECTED_URLS}); refusing to publish a truncated sitemap`
+      );
+    }
+
+    console.log(`Writing ${remainingUrls} URLs to output file...`);
 
     // Clean up URLs to remove carriage returns and line feeds
     if (finalSitemap.urlset && finalSitemap.urlset.url) {
@@ -279,13 +308,13 @@ async function processSitemaps() {
       "<loc>\n            $1\n        </loc>"
     );
 
-    // Ensure the closing urlset tag is properly formatted
+    // The root element is guaranteed to be <urlset> by assertIsSitemap, so a
+    // missing closing tag means the builder produced something unusable.
+    // Appending the tag here would mask that, as it once did for an HTML page.
     if (!xml.endsWith("</urlset>")) {
-      if (xml.endsWith("</urlset")) {
-        xml += ">";
-      } else {
-        xml += "\n</urlset>";
-      }
+      throw new Error(
+        "Generated XML does not end with </urlset>; refusing to write it"
+      );
     }
 
     // Ensure there's a newline at the end of the file
