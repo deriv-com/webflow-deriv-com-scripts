@@ -27,31 +27,35 @@ const updateURLAsPerUserLanguage = () => {
   const current_query = window.location.search;
   const paths = current_path.split("/");
   const first_path = paths[1];
+
   const has_language_in_url = languages.includes(first_path || "");
-  const is_no_language =
-    paths.includes("careers") ||
-    paths.includes("locations") ||
-    paths.includes("derivtech") ||
-    paths.includes("derivlife") ||
-    paths.includes("trading-terms-glossary") ||
-    paths.includes("product-explorer") ||
-    paths.includes("eu-careers") ||
-    paths.includes("our-locations") ||
-    paths.includes("academy") ||
-    paths.includes("trading-specifications");
-  if (has_language_in_url) {
-    setLanguageCookie(first_path);
-  }
+  const is_no_language = [
+    "careers",
+    "locations",
+    "derivtech",
+    "derivlife",
+    "trading-terms-glossary",
+    "product-explorer",
+    "eu-careers",
+    "our-locations",
+    "academy",
+    "trading-specifications",
+  ].some((path) => paths.includes(path));
+
+  setLanguageCookie(has_language_in_url ? first_path : "en");
+
   const user_language =
     getCookieByKey(document.cookie, "webflow-user-language")?.toLowerCase() ||
     "en";
   const language = has_language_in_url ? first_path : user_language;
+
   if (!has_language_in_url && user_language === "en") return;
   if (first_path === user_language) return;
   if (has_language_in_url && first_path !== user_language) {
     setLanguageCookie(language);
     return;
   }
+
   if (!is_no_language) {
     const updated_path = has_language_in_url
       ? paths.map((item) => (item === first_path ? language : item)).join("/")
