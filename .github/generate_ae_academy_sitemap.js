@@ -1,8 +1,12 @@
 /**
  * generate_ae_academy_sitemap.js
  *
- * Fetches https://academy.deriv.ae/sitemap.xml (and .../robots.txt) and
- * rewrites every URL to the new deriv.com/ae structure.
+ * Fetches the sitemap from https://staging-academy.deriv.ae/sitemap.xml.
+ * Production (academy.deriv.ae) no longer publishes a sitemap; it 301s to
+ * deriv.com, which 404s. The staging file still lists the published
+ * academy.deriv.ae URLs, and those are rewritten to the deriv.com/ae structure.
+ * robots.txt is still read from the published host. Staging robots.txt is
+ * "Disallow: /" and must not be copied into the production output.
  *
  * IMPORTANT path rule: if the URL has a locale prefix (e.g. "/ar/..."),
  * the locale must come BEFORE "academy" in the new path, not after:
@@ -27,7 +31,10 @@
 const fs = require("fs");
 const path = require("path");
 
-const SOURCE_DOMAIN = "https://academy.deriv.ae";
+// Where the sitemap file is actually published. Production does not serve one.
+const SITEMAP_ORIGIN = "https://staging-academy.deriv.ae";
+// Host written inside that sitemap. Rewrite these, not the staging host.
+const PUBLISHED_ORIGIN = "https://academy.deriv.ae";
 const TARGET_HOST = "https://deriv.com";
 
 // Locale codes that appear as the FIRST path segment on academy.deriv.ae
@@ -89,11 +96,16 @@ function fileNameFromUrl(url) {
   return name;
 }
 
+function sitemapFetchUrl(url) {
+  // An index may point child files at the published host, which has no sitemap.
+  return url.replace(/^https?:\/\/academy\.deriv\.ae(?=\/|$)/i, SITEMAP_ORIGIN);
+}
+
 async function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-  // 1. Main sitemap
-  const mainSitemapUrl = `${SOURCE_DOMAIN}/sitemap.xml`;
+  // 1. Main sitemap (staging). Locations inside still use the published host.
+  const mainSitemapUrl = `${SITEMAP_ORIGIN}/sitemap.xml`;
   const mainSitemapRaw = await fetchText(mainSitemapUrl);
   const isIndex = /<sitemapindex/i.test(mainSitemapRaw);
 
@@ -102,7 +114,7 @@ async function main() {
     const childUrls = extractLocs(mainSitemapRaw);
 
     for (const childUrl of childUrls) {
-      const childRaw = await fetchText(childUrl);
+      const childRaw = await fetchText(sitemapFetchUrl(childUrl));
       const childRewritten = rewriteText(childRaw);
       const outName = fileNameFromUrl(childUrl);
       fs.writeFileSync(path.join(OUTPUT_DIR, outName), childRewritten, "utf8");
@@ -117,7 +129,7 @@ async function main() {
 
   // 2. robots.txt
   try {
-    const robotsUrl = `${SOURCE_DOMAIN}/robots.txt`;
+    const robotsUrl = `${PUBLISHED_ORIGIN}/robots.txt`;
     const robotsRaw = await fetchText(robotsUrl);
     const robotsRewritten = rewriteText(robotsRaw);
     fs.writeFileSync(path.join(OUTPUT_DIR, "robots.txt"), robotsRewritten, "utf8");
