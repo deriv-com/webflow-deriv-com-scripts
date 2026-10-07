@@ -1,4 +1,4 @@
-name: Old deriv-com only sitemap generation
+name: (Retired) Old deriv-com only sitemap generation
 
 on:
   workflow_dispatch:
