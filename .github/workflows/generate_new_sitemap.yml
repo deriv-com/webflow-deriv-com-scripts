@@ -1,4 +1,4 @@
-name: New Sitemap Generation
+name: (Retired) New Sitemap Generation
 
 on:
   workflow_dispatch:

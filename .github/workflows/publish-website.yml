@@ -1,4 +1,4 @@
-name: Publish website and Upload sitemap and robots
+name: (Retired) Publish website and Upload sitemap and robots
 
 on:
   workflow_dispatch:
