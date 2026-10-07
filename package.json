@@ -43,6 +43,8 @@
     "handlebars": "^4.7.9",
     "serialize-javascript": "^7.0.3",
     "picomatch": "^4.0.4",
-    "undici": "^6.27.0"
+    "undici": "^6.27.0",
+    "simple-git": "^4.0.1",
+    "@simple-git/argv-parser": "^2.0.1"
   }
 }
