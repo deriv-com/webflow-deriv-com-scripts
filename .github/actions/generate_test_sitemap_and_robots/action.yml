@@ -1,0 +1,23 @@
+name: "Generate Test Sitemap.xml and Robots.txt"
+description: "Generate test version of Sitemap.xml and robots.txt for staging domain"
+inputs:
+  main_domain:
+    description: "Main domain for sitemap replacement"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Replace sitemap URLs and create directories for test
+      shell: bash
+      env:
+        MAIN_DOMAIN: ${{ inputs.main_domain }}
+      run: |
+        mkdir test_content
+        domain_name=$(echo $MAIN_DOMAIN | sed 's|https://||g')
+        mkdir -p test_content/$domain_name
+        cp sitemap.xml test_content/$domain_name/sitemap.xml
+        cp robots.txt test_content/$domain_name/robots.txt
+        node .github/modify_sitemap.js --new-domain $domain_name --input-file test_content/$domain_name/sitemap.xml
+        node .github/modify_robots.js --sitemap-url $domain_name --input-file test_content/$domain_name/robots.txt
+        cp test_content/$domain_name/sitemap.xml sitemap.xml
+        cp test_content/$domain_name/robots.txt robots.txt 
